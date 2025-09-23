@@ -1,0 +1,62 @@
+{
+  "calibration": {
+    "method": "neural_network",
+    "model_path": "models/color_detection/camera_calibration.joblib",
+    "color_checker_path": "data/color_checker/",
+    "auto_detect_checker": true
+  },
+  "preprocessing": {
+    "apply_calibration": true,
+    "correct_lighting": true,
+    "lighting_method": "gray_world",
+    "remove_shadows": false,
+    "target_size": [224, 224],
+    "noise_reduction": true
+  },
+  "color_detection": {
+    "model_type": "svm",
+    "feature_type": "combined",
+    "model_path": "models/color_detection/svm_classifier.joblib",
+    "confidence_threshold": 0.7,
+    "use_ensemble": false
+  },
+  "mixing": {
+    "optimization_method": "adaptive",
+    "max_iterations": 1000,
+    "cost_weight": 0.1,
+    "complexity_weight": 0.05,
+    "delta_e_threshold": 2.0,
+    "max_pigments": 5,
+    "min_concentration": 0.001
+  },
+  "pigments": {
+    "database_path": "models/color_mixing/pigments.json",
+    "custom_pigments": [],
+    "cost_currency": "USD"
+  },
+  "output": {
+    "save_visualizations": true,
+    "save_results": true,
+    "results_format": "json",
+    "output_directory": "results/",
+    "create_reports": true
+  },
+  "performance": {
+    "use_gpu": "auto",
+    "batch_size": 32,
+    "num_workers": 4,
+    "cache_results": true
+  },
+  "quality": {
+    "delta_e_excellent": 1.0,
+    "delta_e_good": 2.0,
+    "delta_e_acceptable": 4.0,
+    "cost_limit": 100.0,
+    "validate_results": true
+  },
+  "logging": {
+    "level": "INFO",
+    "log_file": "logs/color_system.log",
+    "enable_debug": false
+  }
+}
