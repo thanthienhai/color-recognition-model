@@ -1,0 +1,104 @@
+#:kivy 2.1.0
+
+<ColorRowWidget@BoxLayout>:
+    orientation: 'horizontal'
+    size_hint_y: None
+    height: 50
+    spacing: 10
+    
+    Spinner:
+        id: colorant_spinner
+        text: 'Chọn màu'
+        values: ['AXX', 'A', 'B', 'C', 'D', 'E', 'L', 'R', 'Y', 'K', 'T', 'W', 'N', 'M', 'P', 'Q']
+        size_hint_x: 0.4
+    
+    TextInput:
+        id: amount_input
+        hint_text: 'Lượng (ml)'
+        input_filter: 'float'
+        multiline: False
+        size_hint_x: 0.4
+    
+    Button:
+        text: 'X'
+        size_hint_x: 0.2
+        background_color: 0.9, 0.3, 0.3, 1
+
+<ManualDispenseScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 15
+        
+        # Tiêu đề
+        Label:
+            text: 'CHIẾT MÀU BẰNG TAY'
+            font_size: '24sp'
+            bold: True
+            size_hint_y: 0.1
+            color: 0.2, 0.2, 0.2, 1
+        
+        # Tên sản phẩm
+        BoxLayout:
+            size_hint_y: 0.1
+            spacing: 10
+            
+            Label:
+                text: 'Tên sản phẩm:'
+                color: 0, 0, 0, 1
+                size_hint_x: 0.3
+                halign: 'right'
+            
+            TextInput:
+                id: product_name_input
+                hint_text: 'Nhập tên sản phẩm'
+                multiline: False
+                size_hint_x: 0.7
+        
+        # Danh sách màu
+        Label:
+            text: 'Danh sách màu:'
+            font_size: '18sp'
+            bold: True
+            size_hint_y: 0.08
+            color: 0.2, 0.2, 0.2, 1
+            halign: 'left'
+        
+        ScrollView:
+            size_hint_y: 0.5
+            
+            GridLayout:
+                id: manual_grid
+                cols: 1
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: 5
+                padding: 10
+                
+                ColorRowWidget:
+                    id: row_1
+
+        # Nút thêm màu
+        Button:
+            text: '+ Thêm màu'
+            size_hint_y: 0.08
+            background_color: 0.3, 0.6, 0.9, 1
+            on_press: root.add_color_row()
+        
+        # Các nút hành động
+        BoxLayout:
+            size_hint_y: 0.14
+            spacing: 15
+            
+            Button:
+                text: 'Lưu công thức'
+                font_size: '16sp'
+                background_color: 0.9, 0.7, 0.2, 1
+                on_press: root.save_formula()
+            
+            Button:
+                text: 'Pha màu'
+                font_size: '18sp'
+                bold: True
+                background_color: 0.2, 0.7, 0.3, 1
+                on_press: root.start_mixing()

@@ -1,0 +1,123 @@
+#:kivy 2.1.0
+
+<MixByFormulaScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 15
+        
+        # Tiêu đề
+        Label:
+            text: 'PHA MÀU THEO CÔNG THỨC'
+            font_size: '24sp'
+            bold: True
+            size_hint_y: 0.1
+            color: 0.2, 0.2, 0.2, 1
+        
+        # Form nhập liệu
+        GridLayout:
+            cols: 2
+            size_hint_y: 0.4
+            spacing: 10
+            row_default_height: 50
+            
+            Label:
+                text: 'Thẻ màu / Hệ màu:'
+                color: 0, 0, 0, 1
+                halign: 'right'
+            Spinner:
+                id: system_spinner
+                text: 'Chọn hệ màu'
+                values: ['RAL', 'Pantone', 'NCS', 'Dulux']
+                on_text: root.on_system_selected(self, self.text)
+            
+            Label:
+                text: 'Mã màu:'
+                color: 0, 0, 0, 1
+                halign: 'right'
+            Spinner:
+                id: code_spinner
+                text: 'Chọn mã màu'
+                values: []
+                on_text: root.on_code_selected(self, self.text)
+            
+            Label:
+                text: 'Tên sản phẩm:'
+                color: 0, 0, 0, 1
+                halign: 'right'
+            TextInput:
+                id: product_name_input
+                hint_text: 'Nhập tên sản phẩm'
+                multiline: False
+            
+            Label:
+                text: 'Thể tích:'
+                color: 0, 0, 0, 1
+                halign: 'right'
+            Spinner:
+                id: volume_spinner
+                text: '1 Lít'
+                values: ['0.5 Lít', '1 Lít', '2.5 Lít', '5 Lít', '10 Lít']
+            
+            Label:
+                text: 'Loại Base:'
+                color: 0, 0, 0, 1
+                halign: 'right'
+            Label:
+                id: base_label
+                text: '-'
+                color: 0, 0, 0, 1
+                halign: 'left'
+            
+            Label:
+                text: 'Giá tiền:'
+                color: 0, 0, 0, 1
+                halign: 'right'
+            Label:
+                id: price_label
+                text: '0 VNĐ'
+                color: 0, 0, 0, 1
+                halign: 'left'
+        
+        # Khu vực hiển thị công thức
+        Label:
+            text: 'Công thức chi tiết:'
+            font_size: '18sp'
+            bold: True
+            size_hint_y: 0.08
+            color: 0.2, 0.2, 0.2, 1
+            halign: 'left'
+        
+        ScrollView:
+            size_hint_y: 0.3
+            BoxLayout:
+                id: formula_display
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                padding: 10
+                spacing: 5
+                
+                Label:
+                    text: 'Chọn mã màu để xem công thức'
+                    color: 0.5, 0.5, 0.5, 1
+                    size_hint_y: None
+                    height: 40
+        
+        # Các nút hành động
+        BoxLayout:
+            size_hint_y: 0.12
+            spacing: 15
+            
+            Button:
+                text: 'Pha màu'
+                font_size: '18sp'
+                bold: True
+                background_color: 0.2, 0.7, 0.3, 1
+                on_press: root.start_mixing()
+            
+            Button:
+                text: 'In nhãn'
+                font_size: '18sp'
+                background_color: 0.3, 0.5, 0.8, 1
+                on_press: root.print_label()

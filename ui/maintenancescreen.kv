@@ -1,0 +1,174 @@
+#:kivy 2.1.0
+
+<MaintenanceScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 15
+        
+        # Tiêu đề
+        Label:
+            text: 'BẢO TRÌ HỆ THỐNG'
+            font_size: '24sp'
+            bold: True
+            size_hint_y: 0.1
+            color: 0.2, 0.2, 0.2, 1
+        
+        ScrollView:
+            size_hint_y: 0.9
+            
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: 20
+                padding: 10
+                
+                # Phần khuấy màu
+                BoxLayout:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: 200
+                    spacing: 10
+                    canvas.before:
+                        Color:
+                            rgba: 0.9, 0.9, 0.9, 1
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [10,]
+                    padding: 15
+                    
+                    Label:
+                        text: 'KHUẤY MÀU'
+                        font_size: '20sp'
+                        bold: True
+                        size_hint_y: 0.25
+                        color: 0, 0, 0, 1
+                        halign: 'left'
+                    
+                    Label:
+                        text: 'Tốc độ khuấy:'
+                        size_hint_y: 0.2
+                        color: 0, 0, 0, 1
+                        halign: 'left'
+                    
+                    BoxLayout:
+                        size_hint_y: 0.25
+                        spacing: 10
+                        
+                        ToggleButton:
+                            id: stir_low
+                            text: 'Thấp'
+                            group: 'stir_speed'
+                            state: 'down'
+                        
+                        ToggleButton:
+                            id: stir_medium
+                            text: 'Trung bình'
+                            group: 'stir_speed'
+                        
+                        ToggleButton:
+                            id: stir_high
+                            text: 'Cao'
+                            group: 'stir_speed'
+                    
+                    BoxLayout:
+                        size_hint_y: 0.3
+                        spacing: 10
+                        
+                        Button:
+                            text: 'Bắt đầu khuấy'
+                            background_color: 0.2, 0.7, 0.3, 1
+                            on_press: root.start_stirring()
+                        
+                        Button:
+                            text: 'Dừng khuấy'
+                            background_color: 0.9, 0.3, 0.3, 1
+                            on_press: root.stop_stirring()
+                
+                # Phần vệ sinh
+                BoxLayout:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: 180
+                    spacing: 10
+                    canvas.before:
+                        Color:
+                            rgba: 0.9, 0.9, 0.9, 1
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [10,]
+                    padding: 15
+                    
+                    Label:
+                        text: 'VỆ SINH ĐẦU PHUN'
+                        font_size: '20sp'
+                        bold: True
+                        size_hint_y: 0.25
+                        color: 0, 0, 0, 1
+                        halign: 'left'
+                    
+                    BoxLayout:
+                        size_hint_y: 0.35
+                        spacing: 10
+                        
+                        Label:
+                            text: 'Lượng phun:'
+                            color: 0, 0, 0, 1
+                            size_hint_x: 0.4
+                        
+                        TextInput:
+                            id: clean_amount_input
+                            text: '50'
+                            input_filter: 'float'
+                            multiline: False
+                            size_hint_x: 0.4
+                        
+                        Label:
+                            text: 'ml'
+                            color: 0, 0, 0, 1
+                            size_hint_x: 0.2
+                    
+                    Button:
+                        text: 'Vệ sinh đầu phun'
+                        size_hint_y: 0.4
+                        background_color: 0.3, 0.6, 0.9, 1
+                        on_press: root.clean_nozzle()
+                
+                # Phần kiểm tra hệ thống
+                BoxLayout:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: 180
+                    spacing: 10
+                    canvas.before:
+                        Color:
+                            rgba: 0.9, 0.9, 0.9, 1
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [10,]
+                    padding: 15
+                    
+                    Label:
+                        text: 'KIỂM TRA HỆ THỐNG'
+                        font_size: '20sp'
+                        bold: True
+                        size_hint_y: 0.25
+                        color: 0, 0, 0, 1
+                        halign: 'left'
+                    
+                    Label:
+                        id: system_status_label
+                        text: 'Trạng thái: Sẵn sàng'
+                        size_hint_y: 0.35
+                        color: 0.2, 0.7, 0.3, 1
+                        font_size: '16sp'
+                        halign: 'left'
+                    
+                    Button:
+                        text: 'Kiểm tra kết nối'
+                        size_hint_y: 0.4
+                        background_color: 0.5, 0.5, 0.5, 1

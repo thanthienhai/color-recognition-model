@@ -1,0 +1,177 @@
+#:kivy 2.1.0
+
+<CalibrationScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 15
+        
+        # Tiêu đề
+        Label:
+            text: 'HIỆU CHUẨN HỆ THỐNG'
+            font_size: '24sp'
+            bold: True
+            size_hint_y: 0.1
+            color: 0.8, 0.3, 0.3, 1
+        
+        # Khu vực mật khẩu
+        BoxLayout:
+            size_hint_y: 0.12
+            spacing: 10
+            canvas.before:
+                Color:
+                    rgba: 1, 0.95, 0.9, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [5,]
+            padding: 10
+            
+            Label:
+                text: 'Mật khẩu:'
+                size_hint_x: 0.2
+                color: 0, 0, 0, 1
+            
+            TextInput:
+                id: password_input
+                password: True
+                multiline: False
+                size_hint_x: 0.5
+                hint_text: 'Nhập mật khẩu kỹ thuật viên'
+            
+            Button:
+                text: 'Mở khóa'
+                size_hint_x: 0.3
+                background_color: 0.9, 0.6, 0.2, 1
+                on_press: root.unlock(password_input.text)
+        
+        ScrollView:
+            size_hint_y: 0.78
+            
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: 20
+                padding: 10
+                
+                # Phần hiệu chuẩn xung
+                BoxLayout:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: 280
+                    spacing: 10
+                    canvas.before:
+                        Color:
+                            rgba: 0.9, 0.9, 0.9, 1
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [10,]
+                    padding: 15
+                    disabled: not root.is_unlocked
+                    
+                    Label:
+                        text: 'HIỆU CHUẨN XUNG'
+                        font_size: '20sp'
+                        bold: True
+                        size_hint_y: 0.2
+                        color: 0, 0, 0, 1
+                        halign: 'left'
+                    
+                    BoxLayout:
+                        size_hint_y: 0.2
+                        spacing: 10
+                        
+                        Label:
+                            text: 'Chọn màu:'
+                            size_hint_x: 0.3
+                            color: 0, 0, 0, 1
+                        
+                        Spinner:
+                            id: colorant_select_spinner
+                            text: 'Chọn màu gốc'
+                            values: ['AXX', 'A', 'B', 'C', 'D', 'E', 'L', 'R', 'Y', 'K', 'T', 'W', 'N', 'M', 'P', 'Q']
+                            size_hint_x: 0.7
+                    
+                    BoxLayout:
+                        size_hint_y: 0.2
+                        spacing: 10
+                        
+                        Label:
+                            text: 'Xung/1ml:'
+                            size_hint_x: 0.3
+                            color: 0, 0, 0, 1
+                        
+                        TextInput:
+                            id: pulse_1ml_input
+                            hint_text: 'Nhập số xung cho 1ml'
+                            input_filter: 'int'
+                            multiline: False
+                            size_hint_x: 0.7
+                    
+                    BoxLayout:
+                        size_hint_y: 0.2
+                        spacing: 10
+                        
+                        Label:
+                            text: 'Xung/0.1ml:'
+                            size_hint_x: 0.3
+                            color: 0, 0, 0, 1
+                        
+                        TextInput:
+                            id: pulse_01ml_input
+                            hint_text: 'Nhập số xung cho 0.1ml'
+                            input_filter: 'int'
+                            multiline: False
+                            size_hint_x: 0.7
+                    
+                    Button:
+                        text: 'Cập nhật xung'
+                        size_hint_y: 0.2
+                        background_color: 0.2, 0.7, 0.3, 1
+                        on_press: root.update_pulse_calibration()
+                
+                # Phần kiểm tra kết nối
+                BoxLayout:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: 150
+                    spacing: 10
+                    canvas.before:
+                        Color:
+                            rgba: 0.9, 0.9, 0.9, 1
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [10,]
+                    padding: 15
+                    
+                    Label:
+                        text: 'TRẠNG THÁI KẾT NỐI'
+                        font_size: '20sp'
+                        bold: True
+                        size_hint_y: 0.35
+                        color: 0, 0, 0, 1
+                        halign: 'left'
+                    
+                    Label:
+                        id: connection_status
+                        text: 'Trạng thái: Đang kiểm tra...'
+                        size_hint_y: 0.35
+                        color: 0.5, 0.5, 0.5, 1
+                        font_size: '16sp'
+                        halign: 'left'
+                    
+                    Button:
+                        text: 'Kiểm tra lại kết nối'
+                        size_hint_y: 0.3
+                        background_color: 0.5, 0.5, 0.5, 1
+                
+                # Cảnh báo
+                Label:
+                    size_hint_y: None
+                    height: 80
+                    text: '⚠ CẢNH BÁO: Chỉ kỹ thuật viên được phép thay đổi cài đặt này.\nThay đổi không đúng có thể ảnh hưởng đến độ chính xác của máy.'
+                    color: 0.9, 0.3, 0.3, 1
+                    font_size: '14sp'

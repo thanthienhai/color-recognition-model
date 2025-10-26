@@ -1,0 +1,13 @@
+# Kivy framework
+kivy==2.2.1
+kivy-garden==0.1.5
+
+# Additional dependencies for Kivy
+pygame==2.5.2
+pygments==2.16.1
+
+# Serial communication for UART
+pyserial==3.5
+
+# Database
+# sqlite3opencv-python

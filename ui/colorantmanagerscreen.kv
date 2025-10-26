@@ -1,0 +1,172 @@
+#:kivy 2.1.0
+
+<ColorantStatusWidget>:
+    orientation: 'vertical'
+    size_hint: None, None
+    size: 120, 200
+    padding: 5
+    spacing: 5
+    canvas.before:
+        Color:
+            rgba: 0.9, 0.9, 0.9, 1
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [10,]
+    
+    # Tên màu
+    Label:
+        text: root.colorant_name
+        font_size: '16sp'
+        bold: True
+        size_hint_y: 0.2
+        color: 0, 0, 0, 1
+    
+    # Thanh tiến trình
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint_y: 0.6
+        padding: 10
+        
+        Widget:
+            size_hint_y: 1
+            canvas:
+                Color:
+                    rgba: 0.3, 0.3, 0.3, 0.3
+                Rectangle:
+                    pos: self.center_x - 20, self.y
+                    size: 40, self.height
+                Color:
+                    rgba: (0.2 if root.level_percent > 30 else (0.9 if root.level_percent > 10 else 0.9)), (0.7 if root.level_percent > 30 else (0.7 if root.level_percent > 10 else 0.3)), (0.3 if root.level_percent > 30 else (0.2 if root.level_percent > 10 else 0.3)), 1
+                Rectangle:
+                    pos: self.center_x - 20, self.y
+                    size: 40, self.height * (root.level_percent / 100.0)
+    
+    # Phần trăm
+    Label:
+        text: '{}%'.format(int(root.level_percent))
+        font_size: '14sp'
+        size_hint_y: 0.1
+        color: 0, 0, 0, 1
+    
+    # Lượng ml
+    Label:
+        text: '{} ml'.format(int(root.level_ml))
+        font_size: '12sp'
+        size_hint_y: 0.1
+        color: 0.3, 0.3, 0.3, 1
+
+<ColorantManagerScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 15
+        
+        # Tiêu đề
+        Label:
+            text: 'QUẢN LÝ MÀU'
+            font_size: '24sp'
+            bold: True
+            size_hint_y: 0.1
+            color: 0.2, 0.2, 0.2, 1
+        
+        # Nút làm mới
+        Button:
+            text: 'Làm mới dữ liệu'
+            size_hint_y: 0.08
+            background_color: 0.3, 0.6, 0.9, 1
+            on_press: root.update_colorant_levels()
+        
+        # Danh sách ống màu
+        ScrollView:
+            size_hint_y: 0.82
+            
+            GridLayout:
+                id: colorant_grid
+                cols: 4
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: 15
+                padding: 10
+                row_default_height: 220
+                
+                # Ví dụ các ống màu (sẽ được tạo động từ CSDL)
+                ColorantStatusWidget:
+                    colorant_name: 'AXX'
+                    level_percent: 85
+                    level_ml: 850
+                
+                ColorantStatusWidget:
+                    colorant_name: 'A'
+                    level_percent: 65
+                    level_ml: 650
+                
+                ColorantStatusWidget:
+                    colorant_name: 'B'
+                    level_percent: 45
+                    level_ml: 450
+                
+                ColorantStatusWidget:
+                    colorant_name: 'C'
+                    level_percent: 92
+                    level_ml: 920
+                
+                ColorantStatusWidget:
+                    colorant_name: 'D'
+                    level_percent: 15
+                    level_ml: 150
+                
+                ColorantStatusWidget:
+                    colorant_name: 'E'
+                    level_percent: 78
+                    level_ml: 780
+                
+                ColorantStatusWidget:
+                    colorant_name: 'L'
+                    level_percent: 55
+                    level_ml: 550
+                
+                ColorantStatusWidget:
+                    colorant_name: 'R'
+                    level_percent: 88
+                    level_ml: 880
+                
+                ColorantStatusWidget:
+                    colorant_name: 'Y'
+                    level_percent: 5
+                    level_ml: 50
+                
+                ColorantStatusWidget:
+                    colorant_name: 'K'
+                    level_percent: 70
+                    level_ml: 700
+                
+                ColorantStatusWidget:
+                    colorant_name: 'T'
+                    level_percent: 82
+                    level_ml: 820
+                
+                ColorantStatusWidget:
+                    colorant_name: 'W'
+                    level_percent: 95
+                    level_ml: 950
+                
+                ColorantStatusWidget:
+                    colorant_name: 'N'
+                    level_percent: 40
+                    level_ml: 400
+                
+                ColorantStatusWidget:
+                    colorant_name: 'M'
+                    level_percent: 60
+                    level_ml: 600
+                
+                ColorantStatusWidget:
+                    colorant_name: 'P'
+                    level_percent: 25
+                    level_ml: 250
+                
+                ColorantStatusWidget:
+                    colorant_name: 'Q'
+                    level_percent: 90
+                    level_ml: 900
