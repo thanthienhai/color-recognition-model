@@ -1702,8 +1702,35 @@ class ColorMixingApp(App):
     def on_start(self):
         """Khi ứng dụng khởi động"""
         print("Hệ thống pha màu tự động khởi động")
-        # Set fullscreen mode
-        Window.fullscreen = True
+
+        # Raspberry Pi specific configuration
+        import platform
+        is_raspberry_pi = 'raspberry' in platform.uname().release.lower() or 'rpi' in platform.uname().release.lower()
+
+        if is_raspberry_pi:
+            print("🎯 Phát hiện Raspberry Pi - cấu hình đặc biệt")
+            try:
+                # Disable fullscreen on RPi to avoid FB config issues
+                Window.fullscreen = False
+                print("✓ Đã tắt chế độ toàn màn hình cho Raspberry Pi")
+
+                # Try to maximize window instead
+                Window.maximize()
+                print("✓ Đã maximize cửa sổ")
+            except Exception as e:
+                print(f"⚠ Không thể cấu hình cửa sổ: {e}")
+        else:
+            # Set fullscreen mode only if display is available (for other systems)
+            try:
+                # Check if we have a valid display
+                if hasattr(Window, '_window') and Window._window:
+                    Window.fullscreen = True
+                    print("✓ Đã kích hoạt chế độ toàn màn hình")
+                else:
+                    print("⚠ Không thể kích hoạt toàn màn hình - không có display hợp lệ")
+            except Exception as e:
+                print(f"⚠ Không thể kích hoạt toàn màn hình: {e}")
+
         # TODO: Kiểm tra kết nối UART, khởi tạo CSDL
 
 
