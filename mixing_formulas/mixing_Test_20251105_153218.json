@@ -1,0 +1,36 @@
+{
+  "timestamp": "2025-11-05T15:32:18.384872",
+  "product_name": "Test Product",
+  "volume": "1L",
+  "color_analysis": {
+    "dominant_color": "Cam Neon",
+    "confidence": 0.0895,
+    "lab_values": {
+      "L": 60.5,
+      "a": 45.2,
+      "b": 50.8
+    },
+    "rgb_values": {
+      "R": 255,
+      "G": 100,
+      "B": 50
+    }
+  },
+  "mixing_formula": {
+    "Cam Neon": 0.0978,
+    "Nâu": 0.0864,
+    "Đỏ": 0.0856,
+    "Vàng Kim": 0.0785,
+    "Vàng Chanh": 0.0757,
+    "Vàng Neon": 0.0703,
+    "Trắng": 0.0697,
+    "Đen": 0.0668,
+    "Tím": 0.0652,
+    "Xanh Lá": 0.0633,
+    "Tím Neon": 0.0622,
+    "Xanh Lam Neon": 0.0609,
+    "Xanh Biển Sâu": 0.0598,
+    "Hồng Neon": 0.0577
+  },
+  "total_parts": 91563
+}

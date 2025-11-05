@@ -1,0 +1,26 @@
+{
+  "timestamp": "2025-11-05T20:40:50.027718",
+  "product_name": "Xám Bạc",
+  "volume": "1L",
+  "source": "saved_color",
+  "color_id": "color_010",
+  "color_analysis": {
+    "dominant_color": "Trắng",
+    "confidence": 0.72,
+    "lab_values": {
+      "L": 78.66,
+      "a": 0.0,
+      "b": 0.0
+    },
+    "rgb_values": {
+      "R": 192,
+      "G": 192,
+      "B": 192
+    }
+  },
+  "mixing_formula": {
+    "trang": 0.75,
+    "den": 0.25
+  },
+  "total_parts": 100
+}

@@ -1,0 +1,35 @@
+{
+  "timestamp": "2025-11-05T15:34:20.662686",
+  "product_name": "Unnamed",
+  "volume": "1 Lít",
+  "color_analysis": {
+    "dominant_color": "Tím",
+    "confidence": 0.0883,
+    "lab_values": {
+      "L": 29.78,
+      "a": 58.93,
+      "b": -36.49
+    },
+    "rgb_values": {
+      "R": 128,
+      "G": 0,
+      "B": 128
+    }
+  },
+  "mixing_formula": {
+    "Tím": 0.1021,
+    "Tím Neon": 0.0971,
+    "Hồng Neon": 0.0872,
+    "Nâu": 0.0824,
+    "Xanh Dương": 0.081,
+    "Xanh Biển Sâu": 0.0781,
+    "Đen": 0.0746,
+    "Trắng": 0.0715,
+    "Xanh Lam Neon": 0.0689,
+    "Đỏ": 0.0687,
+    "Cam Neon": 0.0651,
+    "Vàng Kim": 0.0647,
+    "Vàng Chanh": 0.0586
+  },
+  "total_parts": 86480
+}

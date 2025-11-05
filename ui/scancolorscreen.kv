@@ -3,252 +3,369 @@
 <ScanColorScreen>:
     BoxLayout:
         orientation: 'vertical'
-        padding: 20
-        spacing: 15
+        padding: 15
+        spacing: 10
+        canvas.before:
+            Color:
+                rgba: 0.96, 0.97, 0.98, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
         
         # Tiêu đề
         Label:
-            text: 'PHA MÀU THEO MẪU'
-            font_size: '24sp'
+            text: 'PHÁ MÀU THEO MẪU'
+            font_size: '22sp'
             bold: True
-            size_hint_y: 0.1
-            color: 0.2, 0.2, 0.2, 1
+            size_hint_y: 0.08
+            color: 0.15, 0.35, 0.55, 1
         
         BoxLayout:
             orientation: 'horizontal'
-            size_hint_y: 0.9
-            spacing: 20
+            size_hint_y: 0.92
+            spacing: 15
             
             # Bên trái - Điều khiển và hiển thị màu
             BoxLayout:
                 orientation: 'vertical'
-                size_hint_x: 0.45
-                spacing: 15
+                size_hint_x: 0.48
+                spacing: 10
                 
-                # Chọn camera
+                # Camera selection card
                 BoxLayout:
                     orientation: 'horizontal'
-                    size_hint_y: 0.15
-                    spacing: 10
+                    size_hint_y: None
+                    height: 50
+                    spacing: 8
+                    padding: [5, 5, 5, 5]
+                    canvas.before:
+                        Color:
+                            rgba: 1, 1, 1, 1
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [8,]
                     
                     Spinner:
                         id: camera_spinner
                         text: 'Chọn Camera'
                         values: []
-                        size_hint_x: 0.7
+                        size_hint_x: 0.75
+                        font_size: '14sp'
                         on_text: root.start_camera_preview()
                         
                     Button:
                         text: 'Tìm'
-                        size_hint_x: 0.3
+                        size_hint_x: 0.25
+                        font_size: '14sp'
+                        background_color: 0.3, 0.5, 0.7, 1
                         on_press: app.find_cameras()
 
                 # Camera control buttons
                 BoxLayout:
                     orientation: 'horizontal'
-                    size_hint_y: 0.15
-                    spacing: 5
+                    size_hint_y: None
+                    height: 45
+                    spacing: 6
                     
                     Button:
-                        text: 'BẮT ĐẦU PREVIEW'
-                        font_size: '16sp'
+                        text: 'Xem trước'
+                        font_size: '13sp'
                         bold: True
-                        size_hint_x: 0.45
-                        background_color: 0.2, 0.6, 0.9, 1
+                        background_color: 0.25, 0.55, 0.85, 1
                         on_press: root.start_camera_preview()
                     
                     Button:
-                        text: 'DỪNG PREVIEW'
-                        font_size: '16sp'
+                        text: 'Dừng'
+                        font_size: '13sp'
                         bold: True
-                        size_hint_x: 0.45
-                        background_color: 0.8, 0.3, 0.3, 1
+                        background_color: 0.75, 0.35, 0.35, 1
                         on_press: root.stop_camera_preview()
+                        
+                    Button:
+                        text: 'Test AI'
+                        font_size: '13sp'
+                        bold: True
+                        background_color: 0.85, 0.55, 0.25, 1
+                        on_press: root.test_ai_color_analysis()
                 
-                # Nút đo màu
+                # Main scan button
                 Button:
-                    text: 'ĐO MÀU NGAY'
-                    font_size: '20sp'
+                    text: '🎨 ĐO MÀU (AI)'
+                    font_size: '18sp'
                     bold: True
-                    size_hint_y: 0.1
-                    background_color: 0.2, 0.8, 0.4, 1
+                    size_hint_y: None
+                    height: 55
+                    background_color: 0.2, 0.75, 0.4, 1
+                    canvas.before:
+                        Color:
+                            rgba: 0.2, 0.75, 0.4, 1
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [10,]
                     on_press: root.capture_and_analyze()
                 
                 # Camera preview and color display
                 BoxLayout:
                     orientation: 'vertical'
-                    size_hint_y: 0.5
-                    spacing: 10
+                    spacing: 8
                     
                     Label:
-                        text: 'Camera Preview / Màu đã đo:'
-                        font_size: '18sp'
-                        size_hint_y: 0.1
-                        color: 0, 0, 0, 1
+                        text: 'Xem trước / Màu đo'
+                        font_size: '15sp'
+                        bold: True
+                        size_hint_y: None
+                        height: 30
+                        color: 0.2, 0.2, 0.2, 1
                     
                     BoxLayout:
                         orientation: 'horizontal'
-                        size_hint_y: 0.9
-                        spacing: 5
+                        spacing: 10
                         
                         # Camera preview
                         BoxLayout:
-                            size_hint_x: 0.6
+                            size_hint_x: 0.62
                             canvas.before:
                                 Color:
-                                    rgba: 0.2, 0.2, 0.2, 1
-                                Rectangle:
+                                    rgba: 0.15, 0.15, 0.15, 1
+                                RoundedRectangle:
                                     pos: self.pos
                                     size: self.size
+                                    radius: [12,]
+                            padding: 3
+                            
                             Image:
                                 id: camera_preview
                                 allow_stretch: True
                                 keep_ratio: True
-                            
-                            # Camera overlay text
-                            Label:
-                                text: 'Camera Preview'
-                                color: 1, 1, 1, 1
-                                size_hint: None, None
-                                size: 120, 30
-                                pos: 5, 5
                         
                         # Color preview
-                        Widget:
-                            size_hint_x: 0.4
-                            id: scanned_color_preview
-                            canvas:
+                        BoxLayout:
+                            size_hint_x: 0.38
+                            canvas.before:
                                 Color:
-                                    rgba: root.scanned_color[0], root.scanned_color[1], root.scanned_color[2], 1
-                                Rectangle:
+                                    rgba: 1, 1, 1, 1
+                                RoundedRectangle:
                                     pos: self.pos
                                     size: self.size
-                                Color:
-                                    rgba: 0, 0, 0, 1
-                                Line:
-                                    rectangle: [self.x, self.y, self.width, self.height]
-                                    width: 2
+                                    radius: [12,]
+                            padding: 8
+                            
+                            Widget:
+                                id: scanned_color_preview
+                                canvas:
+                                    Color:
+                                        rgba: root.scanned_color[0], root.scanned_color[1], root.scanned_color[2], 1
+                                    RoundedRectangle:
+                                        pos: self.pos
+                                        size: self.size
+                                        radius: [8,]
+                                    Color:
+                                        rgba: 0.8, 0.8, 0.8, 1
+                                    Line:
+                                        rounded_rectangle: [self.x, self.y, self.width, self.height, 8]
+                                        width: 1.5
                 
-                # Giá trị L*a*b*
+                # Lab values card
                 BoxLayout:
                     orientation: 'vertical'
-                    size_hint_y: 0.25
-                    spacing: 5
+                    size_hint_y: None
+                    height: 110
+                    spacing: 8
                     canvas.before:
                         Color:
-                            rgba: 0.9, 0.9, 0.9, 1
+                            rgba: 1, 1, 1, 1
                         RoundedRectangle:
                             pos: self.pos
                             size: self.size
-                            radius: [5,]
-                    padding: 10
+                            radius: [10,]
+                    padding: 12
                     
                     Label:
-                        text: 'Giá trị L*a*b*:'
-                        font_size: '16sp'
+                        text: 'Giá trị L*a*b*'
+                        font_size: '14sp'
                         bold: True
-                        size_hint_y: 0.3
-                        color: 0, 0, 0, 1
+                        size_hint_y: None
+                        height: 25
+                        color: 0.3, 0.3, 0.3, 1
                     
                     Label:
                         id: lab_value_label
-                        text: 'L*: {:.2f}\\na*: {:.2f}\\nb*: {:.2f}'.format(root.lab_values[0], root.lab_values[1], root.lab_values[2])
+                        text: 'L*: {:.2f}  |  a*: {:.2f}  |  b*: {:.2f}'.format(root.lab_values[0], root.lab_values[1], root.lab_values[2])
+                        font_size: '15sp'
+                        bold: True
+                        size_hint_y: None
+                        height: 30
+                        color: 0.15, 0.35, 0.55, 1
+                    
+                    Button:
+                        text: '📊 Tính công thức'
+                        size_hint_y: None
+                        height: 38
                         font_size: '14sp'
-                        size_hint_y: 0.7
-                        color: 0, 0, 0, 1
-                
-                Button:
-                    text: 'Tính công thức'
-                    size_hint_y: 0.1
-                    background_color: 0.9, 0.7, 0.2, 1
-                    on_press: root.calculate_formula()
+                        bold: True
+                        background_color: 0.85, 0.65, 0.25, 1
+                        on_press: root.calculate_formula()
             
             # Bên phải - Hiển thị công thức
             BoxLayout:
                 orientation: 'vertical'
-                size_hint_x: 0.55
-                spacing: 15
+                size_hint_x: 0.52
+                spacing: 10
                 
                 Label:
-                    text: 'Công thức được tính toán:'
-                    font_size: '18sp'
-                    bold: True
-                    size_hint_y: 0.08
-                    color: 0, 0, 0, 1
-                    halign: 'left'
-                
-                # Tên sản phẩm
-                BoxLayout:
-                    size_hint_y: 0.1
-                    spacing: 10
-                    
-                    Label:
-                        text: 'Tên sản phẩm:'
-                        color: 0, 0, 0, 1
-                        size_hint_x: 0.35
-                        halign: 'right'
-                    
-                    TextInput:
-                        id: product_name_input
-                        hint_text: 'Nhập tên sản phẩm'
-                        multiline: False
-                        size_hint_x: 0.65
-                
-                # Thể tích
-                BoxLayout:
-                    size_hint_y: 0.1
-                    spacing: 10
-                    
-                    Label:
-                        text: 'Thể tích:'
-                        color: 0, 0, 0, 1
-                        size_hint_x: 0.35
-                        halign: 'right'
-                    
-                    Spinner:
-                        id: volume_spinner
-                        text: '1 Lít'
-                        values: ['0.5 Lít', '1 Lít', '2.5 Lít', '5 Lít', '10 Lít']
-                        size_hint_x: 0.65
-                
-                # Công thức chi tiết
-                ScrollView:
-                    size_hint_y: 0.52
-                    
-                    BoxLayout:
-                        id: result_formula_display
-                        orientation: 'vertical'
-                        size_hint_y: None
-                        height: self.minimum_height
-                        padding: 10
-                        spacing: 5
-                        
-                        Label:
-                            text: 'Nhấn "Bắt đầu đo màu" để quét mẫu'
-                            color: 0.5, 0.5, 0.5, 1
-                            size_hint_y: None
-                            height: 40
-                
-                # Sai số ΔE
-                Label:
-                    id: delta_e_label
-                    text: 'ΔE: -'
+                    text: 'KẾT QUẢ PHÂN TÍCH'
                     font_size: '16sp'
-                    size_hint_y: 0.08
-                    color: 0, 0, 0, 1
+                    bold: True
+                    size_hint_y: None
+                    height: 35
+                    color: 0.15, 0.35, 0.55, 1
+                
+                # Product info card
+                BoxLayout:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: 110
+                    spacing: 8
+                    padding: 12
                     canvas.before:
                         Color:
-                            rgba: 0.9, 0.95, 0.9, 1
+                            rgba: 1, 1, 1, 1
                         RoundedRectangle:
                             pos: self.pos
                             size: self.size
-                            radius: [5,]
+                            radius: [10,]
+                    
+                    # Tên sản phẩm
+                    BoxLayout:
+                        size_hint_y: None
+                        height: 45
+                        spacing: 8
+                        
+                        Label:
+                            text: 'Tên SP:'
+                            color: 0.3, 0.3, 0.3, 1
+                            font_size: '13sp'
+                            size_hint_x: 0.25
+                            halign: 'right'
+                        
+                        TextInput:
+                            id: product_name_input
+                            hint_text: 'Nhập tên...'
+                            multiline: False
+                            size_hint_x: 0.75
+                            font_size: '13sp'
+                            padding: [10, 10, 10, 10]
+                    
+                    # Thể tích
+                    BoxLayout:
+                        size_hint_y: None
+                        height: 45
+                        spacing: 8
+                        
+                        Label:
+                            text: 'Thể tích:'
+                            color: 0.3, 0.3, 0.3, 1
+                            font_size: '13sp'
+                            size_hint_x: 0.25
+                            halign: 'right'
+                        
+                        Spinner:
+                            id: volume_spinner
+                            text: '1 Lít'
+                            values: ['0.5L', '1L', '2.5L', '5L', '10L']
+                            size_hint_x: 0.75
+                            font_size: '13sp'
                 
-                # Nút pha màu
-                Button:
-                    text: 'Pha màu này'
-                    font_size: '18sp'
-                    bold: True
-                    size_hint_y: 0.12
-                    background_color: 0.2, 0.7, 0.3, 1
-                    on_press: root.start_mixing()
+                # Formula display card
+                BoxLayout:
+                    orientation: 'vertical'
+                    spacing: 8
+                    canvas.before:
+                        Color:
+                            rgba: 1, 1, 1, 1
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [10,]
+                    padding: 12
+                    
+                    Label:
+                        text: 'Công thức pha'
+                        font_size: '14sp'
+                        bold: True
+                        size_hint_y: None
+                        height: 30
+                        color: 0.3, 0.3, 0.3, 1
+                    
+                    ScrollView:
+                        BoxLayout:
+                            id: result_formula_display
+                            orientation: 'vertical'
+                            size_hint_y: None
+                            height: self.minimum_height
+                            padding: [5, 5, 5, 5]
+                            spacing: 5
+                            
+                            Label:
+                                text: 'Nhấn "Đo màu (AI)" để phân tích'
+                                color: 0.6, 0.6, 0.6, 1
+                                font_size: '13sp'
+                                size_hint_y: None
+                                height: 40
+                
+                # Delta E info
+                BoxLayout:
+                    size_hint_y: None
+                    height: 45
+                    padding: 10
+                    canvas.before:
+                        Color:
+                            rgba: 0.95, 0.98, 0.95, 1
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [8,]
+                    
+                    Label:
+                        id: delta_e_label
+                        text: 'ΔE: -'
+                        font_size: '14sp'
+                        bold: True
+                        color: 0.2, 0.5, 0.2, 1
+                
+                # Action buttons
+                BoxLayout:
+                    orientation: 'horizontal'
+                    spacing: 10
+                    size_hint_y: None
+                    height: 55
+                    
+                    Button:
+                        text: '💾 LƯU MÀU'
+                        font_size: '16sp'
+                        bold: True
+                        background_color: 0.3, 0.6, 0.9, 1
+                        canvas.before:
+                            Color:
+                                rgba: 0.3, 0.6, 0.9, 1
+                            RoundedRectangle:
+                                pos: self.pos
+                                size: self.size
+                                radius: [10,]
+                        on_press: root.save_current_color()
+                    
+                    Button:
+                        text: '✓ PHA MÀU NÀY'
+                        font_size: '16sp'
+                        bold: True
+                        background_color: 0.25, 0.7, 0.35, 1
+                        canvas.before:
+                            Color:
+                                rgba: 0.25, 0.7, 0.35, 1
+                            RoundedRectangle:
+                                pos: self.pos
+                                size: self.size
+                                radius: [10,]
+                        on_press: root.start_mixing()

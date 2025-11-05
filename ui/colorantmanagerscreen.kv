@@ -1,5 +1,77 @@
 #:kivy 2.1.0
 
+<SavedColorWidget>:
+    orientation: 'vertical'
+    size_hint: None, None
+    size: 180, 240
+    padding: 8
+    spacing: 5
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [12,]
+        Color:
+            rgba: 0.9, 0.9, 0.9, 1
+        Line:
+            rounded_rectangle: (self.x, self.y, self.width, self.height, 12)
+            width: 1.5
+    
+    # Color preview box
+    Widget:
+        size_hint_y: 0.35
+        canvas:
+            Color:
+                rgba: root.color_rgb[0]/255.0, root.color_rgb[1]/255.0, root.color_rgb[2]/255.0, 1
+            RoundedRectangle:
+                pos: self.x + 5, self.y + 5
+                size: self.width - 10, self.height - 10
+                radius: [8,]
+    
+    # Color name
+    Label:
+        text: root.color_name
+        font_size: '15sp'
+        bold: True
+        size_hint_y: 0.15
+        color: 0.1, 0.1, 0.1, 1
+        text_size: self.size
+        halign: 'center'
+        valign: 'middle'
+    
+    # Hex code
+    Label:
+        text: root.hex_code
+        font_size: '12sp'
+        size_hint_y: 0.1
+        color: 0.4, 0.4, 0.4, 1
+    
+    # Dominant color and confidence
+    Label:
+        text: '{} ({:.0f}%)'.format(root.dominant_color, root.confidence * 100)
+        font_size: '11sp'
+        size_hint_y: 0.1
+        color: 0.3, 0.5, 0.7, 1
+    
+    # Description
+    Label:
+        text: root.description
+        font_size: '10sp'
+        size_hint_y: 0.15
+        color: 0.5, 0.5, 0.5, 1
+        text_size: self.size
+        halign: 'center'
+        valign: 'top'
+    
+    # Mix button
+    Button:
+        text: 'Pha Màu Này'
+        size_hint_y: 0.15
+        background_color: 0.2, 0.6, 0.9, 1
+        on_press: root.on_mix_pressed()
+
 <ColorantStatusWidget>:
     orientation: 'vertical'
     size_hint: None, None
@@ -60,113 +132,56 @@
     BoxLayout:
         orientation: 'vertical'
         padding: 20
-        spacing: 15
+        spacing: 10
         
         # Tiêu đề
         Label:
-            text: 'QUẢN LÝ MÀU'
+            text: 'QUẢN LÝ MÀU ĐÃ LƯU'
             font_size: '24sp'
             bold: True
-            size_hint_y: 0.1
+            size_hint_y: 0.08
             color: 0.2, 0.2, 0.2, 1
         
-        # Nút làm mới
-        Button:
-            text: 'Làm mới dữ liệu'
+        # Control buttons
+        BoxLayout:
             size_hint_y: 0.08
-            background_color: 0.3, 0.6, 0.9, 1
-            on_press: root.update_colorant_levels()
+            spacing: 10
+            
+            Button:
+                text: 'Làm mới'
+                background_color: 0.3, 0.6, 0.9, 1
+                on_press: root.refresh_saved_colors()
+            
+            TextInput:
+                id: search_input
+                hint_text: 'Tìm kiếm màu...'
+                multiline: False
+                size_hint_x: 2
+                on_text: root.search_colors(self.text)
+            
+            Button:
+                text: 'Xóa bộ lọc'
+                background_color: 0.6, 0.6, 0.6, 1
+                on_press: root.clear_search()
         
-        # Danh sách ống màu
+        # Saved colors grid
+        Label:
+            text: 'Màu đã lưu ({}):'.format(root.total_colors)
+            font_size: '16sp'
+            size_hint_y: 0.05
+            halign: 'left'
+            color: 0.3, 0.3, 0.3, 1
+        
         ScrollView:
-            size_hint_y: 0.82
+            size_hint_y: 0.79
             
             GridLayout:
-                id: colorant_grid
-                cols: 4
+                id: saved_colors_grid
+                cols: 3
                 size_hint_y: None
                 height: self.minimum_height
                 spacing: 15
                 padding: 10
-                row_default_height: 220
+                row_default_height: 260
                 
-                # Ví dụ các ống màu (sẽ được tạo động từ CSDL)
-                ColorantStatusWidget:
-                    colorant_name: 'AXX'
-                    level_percent: 85
-                    level_ml: 850
-                
-                ColorantStatusWidget:
-                    colorant_name: 'A'
-                    level_percent: 65
-                    level_ml: 650
-                
-                ColorantStatusWidget:
-                    colorant_name: 'B'
-                    level_percent: 45
-                    level_ml: 450
-                
-                ColorantStatusWidget:
-                    colorant_name: 'C'
-                    level_percent: 92
-                    level_ml: 920
-                
-                ColorantStatusWidget:
-                    colorant_name: 'D'
-                    level_percent: 15
-                    level_ml: 150
-                
-                ColorantStatusWidget:
-                    colorant_name: 'E'
-                    level_percent: 78
-                    level_ml: 780
-                
-                ColorantStatusWidget:
-                    colorant_name: 'L'
-                    level_percent: 55
-                    level_ml: 550
-                
-                ColorantStatusWidget:
-                    colorant_name: 'R'
-                    level_percent: 88
-                    level_ml: 880
-                
-                ColorantStatusWidget:
-                    colorant_name: 'Y'
-                    level_percent: 5
-                    level_ml: 50
-                
-                ColorantStatusWidget:
-                    colorant_name: 'K'
-                    level_percent: 70
-                    level_ml: 700
-                
-                ColorantStatusWidget:
-                    colorant_name: 'T'
-                    level_percent: 82
-                    level_ml: 820
-                
-                ColorantStatusWidget:
-                    colorant_name: 'W'
-                    level_percent: 95
-                    level_ml: 950
-                
-                ColorantStatusWidget:
-                    colorant_name: 'N'
-                    level_percent: 40
-                    level_ml: 400
-                
-                ColorantStatusWidget:
-                    colorant_name: 'M'
-                    level_percent: 60
-                    level_ml: 600
-                
-                ColorantStatusWidget:
-                    colorant_name: 'P'
-                    level_percent: 25
-                    level_ml: 250
-                
-                ColorantStatusWidget:
-                    colorant_name: 'Q'
-                    level_percent: 90
-                    level_ml: 900
+                # Saved colors will be added dynamically

@@ -1,0 +1,26 @@
+{
+  "timestamp": "2025-11-05T19:57:36.019631",
+  "product_name": "color_cam_neon_!",
+  "volume": "1L",
+  "color_analysis": {
+    "dominant_color": "Cam Neon",
+    "confidence": 0.6788,
+    "lab_values": {
+      "L": 106.15,
+      "a": 142.84,
+      "b": 153.82
+    },
+    "rgb_values": {
+      "R": 133,
+      "G": 88,
+      "B": 56
+    }
+  },
+  "mixing_formula": {
+    "cam_neon": 0.688,
+    "trang": 0.1666,
+    "do": 0.0991,
+    "vang_kim": 0.0463
+  },
+  "total_parts": 98658
+}

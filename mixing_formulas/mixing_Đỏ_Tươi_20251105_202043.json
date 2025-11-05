@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-11-05T20:20:43.787845",
+  "product_name": "Đỏ Tươi",
+  "volume": "1L",
+  "source": "saved_color",
+  "color_id": "color_001",
+  "color_analysis": {
+    "dominant_color": "Đỏ",
+    "confidence": 0.95,
+    "lab_values": {
+      "L": 53.24,
+      "a": 80.09,
+      "b": 67.2
+    },
+    "rgb_values": {
+      "R": 220,
+      "G": 20,
+      "B": 30
+    }
+  },
+  "mixing_formula": {
+    "do": 0.95,
+    "cam_neon": 0.03,
+    "nau": 0.02
+  },
+  "total_parts": 100
+}

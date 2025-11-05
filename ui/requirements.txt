@@ -10,4 +10,11 @@ pygments==2.16.1
 pyserial==3.5
 
 # Database
-# sqlite3opencv-python
+# sqlite3 is built-in
+
+# Computer Vision
+opencv-python==4.8.1.78
+
+# Color processing
+numpy==1.24.3
+scipy==1.11.1

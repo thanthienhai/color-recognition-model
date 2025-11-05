@@ -1,0 +1,248 @@
+{
+  "colors": [
+    {
+      "id": "color_001",
+      "name": "Đỏ Tươi",
+      "timestamp": "2025-01-15 10:30:00",
+      "rgb": [
+        220,
+        20,
+        30
+      ],
+      "lab": [
+        53.24,
+        80.09,
+        67.2
+      ],
+      "hex": "#DC141E",
+      "dominant_color": "Đỏ",
+      "confidence": 0.95,
+      "formula": {
+        "Đỏ": 95,
+        "Cam Neon": 3,
+        "Nâu": 2
+      },
+      "description": "Màu đỏ tươi sáng, phù hợp cho sơn tường ngoại thất"
+    },
+    {
+      "id": "color_002",
+      "name": "Xanh Biển Nhạt",
+      "timestamp": "2025-01-15 11:00:00",
+      "rgb": [
+        135,
+        206,
+        235
+      ],
+      "lab": [
+        79.19,
+        -10.65,
+        -25.68
+      ],
+      "hex": "#87CEEB",
+      "dominant_color": "Xanh Biển Sâu",
+      "confidence": 0.88,
+      "formula": {
+        "Xanh Biển Sâu": 75,
+        "Trắng": 20,
+        "Xanh Lam Neon": 5
+      },
+      "description": "Màu xanh biển nhẹ nhàng cho phòng ngủ"
+    },
+    {
+      "id": "color_003",
+      "name": "Vàng Chanh Sáng",
+      "timestamp": "2025-01-15 11:30:00",
+      "rgb": [
+        255,
+        255,
+        0
+      ],
+      "lab": [
+        97.14,
+        -21.55,
+        94.48
+      ],
+      "hex": "#FFFF00",
+      "dominant_color": "Vàng Chanh",
+      "confidence": 0.92,
+      "formula": {
+        "Vàng Chanh": 90,
+        "Vàng Neon": 8,
+        "Vàng Kim": 2
+      },
+      "description": "Màu vàng chanh rực rỡ, nổi bật"
+    },
+    {
+      "id": "color_004",
+      "name": "Xanh Lá Mạ",
+      "timestamp": "2025-01-15 12:00:00",
+      "rgb": [
+        34,
+        139,
+        34
+      ],
+      "lab": [
+        51.87,
+        -51.68,
+        49.9
+      ],
+      "hex": "#228B22",
+      "dominant_color": "Xanh Lá",
+      "confidence": 0.91,
+      "formula": {
+        "Xanh Lá": 85,
+        "Xanh Neon": 10,
+        "Đen": 5
+      },
+      "description": "Màu xanh lá cây tự nhiên"
+    },
+    {
+      "id": "color_005",
+      "name": "Tím Lavender",
+      "timestamp": "2025-01-15 12:30:00",
+      "rgb": [
+        230,
+        230,
+        250
+      ],
+      "lab": [
+        91.64,
+        2.87,
+        -12.75
+      ],
+      "hex": "#E6E6FA",
+      "dominant_color": "Tím",
+      "confidence": 0.78,
+      "formula": {
+        "Tím": 45,
+        "Trắng": 50,
+        "Tím Neon": 5
+      },
+      "description": "Màu tím lavender nhẹ nhàng, thư giãn"
+    },
+    {
+      "id": "color_006",
+      "name": "Cam Đất",
+      "timestamp": "2025-01-15 13:00:00",
+      "rgb": [
+        210,
+        105,
+        30
+      ],
+      "lab": [
+        56.45,
+        31.52,
+        60.75
+      ],
+      "hex": "#D2691E",
+      "dominant_color": "Cam Neon",
+      "confidence": 0.83,
+      "formula": {
+        "Cam Neon": 70,
+        "Nâu": 20,
+        "Đỏ": 10
+      },
+      "description": "Màu cam đất ấm áp, phong cách vintage"
+    },
+    {
+      "id": "color_007",
+      "name": "Hồng Pastel",
+      "timestamp": "2025-01-15 13:30:00",
+      "rgb": [
+        255,
+        182,
+        193
+      ],
+      "lab": [
+        81.37,
+        24.86,
+        2.47
+      ],
+      "hex": "#FFB6C1",
+      "dominant_color": "Hồng Neon",
+      "confidence": 0.85,
+      "formula": {
+        "Hồng Neon": 55,
+        "Trắng": 40,
+        "Đỏ": 5
+      },
+      "description": "Màu hồng nhẹ nhàng cho phòng bé gái"
+    },
+    {
+      "id": "color_008",
+      "name": "Xanh Dương Đậm",
+      "timestamp": "2025-01-15 14:00:00",
+      "rgb": [
+        0,
+        0,
+        139
+      ],
+      "lab": [
+        29.57,
+        68.3,
+        -112.03
+      ],
+      "hex": "#00008B",
+      "dominant_color": "Xanh Dương",
+      "confidence": 0.96,
+      "formula": {
+        "Xanh Dương": 92,
+        "Đen": 5,
+        "Tím": 3
+      },
+      "description": "Màu xanh dương đậm, sang trọng"
+    },
+    {
+      "id": "color_009",
+      "name": "Nâu Chocolate",
+      "timestamp": "2025-01-15 14:30:00",
+      "rgb": [
+        123,
+        63,
+        0
+      ],
+      "lab": [
+        36.48,
+        25.42,
+        46.84
+      ],
+      "hex": "#7B3F00",
+      "dominant_color": "Nâu",
+      "confidence": 0.89,
+      "formula": {
+        "Nâu": 80,
+        "Đen": 15,
+        "Cam Neon": 5
+      },
+      "description": "Màu nâu chocolate đậm, ấm cúng"
+    },
+    {
+      "id": "color_010",
+      "name": "Xám Bạc",
+      "timestamp": "2025-01-15 15:00:00",
+      "rgb": [
+        192,
+        192,
+        192
+      ],
+      "lab": [
+        78.66,
+        0.0,
+        0.0
+      ],
+      "hex": "#C0C0C0",
+      "dominant_color": "Trắng",
+      "confidence": 0.72,
+      "formula": {
+        "Trắng": 75,
+        "Đen": 25
+      },
+      "description": "Màu xám bạc trung tính, hiện đại"
+    }
+  ],
+  "metadata": {
+    "total_colors": 10,
+    "last_updated": "2025-11-05 20:06:19",
+    "version": "1.0"
+  }
+}

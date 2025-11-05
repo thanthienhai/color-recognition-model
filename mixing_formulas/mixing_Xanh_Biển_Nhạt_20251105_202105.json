@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-11-05T20:21:05.436725",
+  "product_name": "Xanh Biển Nhạt",
+  "volume": "1L",
+  "source": "saved_color",
+  "color_id": "color_002",
+  "color_analysis": {
+    "dominant_color": "Xanh Biển Sâu",
+    "confidence": 0.88,
+    "lab_values": {
+      "L": 79.19,
+      "a": -10.65,
+      "b": -25.68
+    },
+    "rgb_values": {
+      "R": 135,
+      "G": 206,
+      "B": 235
+    }
+  },
+  "mixing_formula": {
+    "xanh_bien_sau": 0.75,
+    "trang": 0.2,
+    "xanh_lam_neon": 0.05
+  },
+  "total_parts": 100
+}

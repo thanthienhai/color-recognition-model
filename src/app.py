@@ -1,6 +1,10 @@
 """
 Main application for color recognition and mixing system
 Provides command-line interface and pipeline orchestration
+
+WARNING: This module uses old ML-based algorithms (SVM, CNN) that are currently disabled.
+The production system uses CIEDE2000 algorithm from advanced_color_analysis.py instead.
+This file is kept for reference but may not work without uncommenting sklearn/torch dependencies.
 """
 
 import argparse
@@ -22,12 +26,13 @@ from utils import (
     ColorDifferenceCalculator,
     Visualizer
 )
-from preprocessing import CameraCalibrator, ImagePreprocessor
-from color_recognition import (
-    SVMColorClassifier, 
-    DeepColorClassifier,
-    create_color_detection_pipeline
-)
+# UNUSED: These imports use disabled ML algorithms
+# from preprocessing import CameraCalibrator, ImagePreprocessor
+# from color_recognition import (
+#     SVMColorClassifier, 
+#     DeepColorClassifier,
+#     create_color_detection_pipeline
+# )
 from mixing_formula import (
     KubelkaMunkModel, 
     MixingOptimizer,

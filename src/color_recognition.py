@@ -1,30 +1,41 @@
 """
 Color recognition module using machine learning and deep learning approaches
 Implements SVM, CNN, and YOLO-based color detection algorithms
+
+NOTE: These algorithms are NOT currently used in production.
+The system uses CIEDE2000 algorithm from advanced_color_analysis.py instead.
+Keeping this code commented out for potential future use.
 """
 
 import cv2
 import numpy as np
 from typing import List, Tuple, Dict, Optional, Union
 import matplotlib.pyplot as plt
-from sklearn.svm import SVC
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import classification_report, confusion_matrix
-import torch
-import torch.nn as nn
-import torch.optim as optim
-from torch.utils.data import Dataset, DataLoader
-import torchvision.transforms as transforms
-import joblib
+
+# UNUSED: SVM and Deep Learning models - commented out as not used with CIEDE2000
+# from sklearn.svm import SVC
+# from sklearn.ensemble import RandomForestClassifier
+# from sklearn.model_selection import train_test_split, GridSearchCV
+# from sklearn.preprocessing import StandardScaler
+# from sklearn.metrics import classification_report, confusion_matrix
+# import torch
+# import torch.nn as nn
+# import torch.optim as optim
+# from torch.utils.data import Dataset, DataLoader
+# import torchvision.transforms as transforms
+# import joblib
 import os
 
 from .utils import ColorSpaceConverter, ImageProcessor, DataProcessor
 
 
+# ==============================================================================
+# UNUSED CLASSES - Commented out as CIEDE2000 algorithm is used instead
+# ==============================================================================
+
+"""
 class ColorFeatureExtractor:
-    """Extract color features from images for machine learning models"""
+    '''Extract color features from images for machine learning models'''
     
     @staticmethod
     def extract_basic_features(image: np.ndarray, 
@@ -593,7 +604,7 @@ class ColorSegmenter:
 
 def create_color_detection_pipeline(model_type: str = 'svm',
                                   calibration_path: Optional[str] = None) -> object:
-    """
+    '''
     Create complete color detection pipeline
     
     Args:
@@ -602,7 +613,7 @@ def create_color_detection_pipeline(model_type: str = 'svm',
         
     Returns:
         Configured color detection pipeline
-    """
+    '''
     from .preprocessing import CameraCalibrator, ImagePreprocessor
     
     # Load calibration if available
@@ -640,3 +651,8 @@ def create_color_detection_pipeline(model_type: str = 'svm',
             return self.classifier.train(processed_images, labels, **kwargs)
     
     return ColorDetectionPipeline(preprocessor, classifier)
+"""
+
+# ==============================================================================
+# END OF UNUSED CLASSES
+# ==============================================================================

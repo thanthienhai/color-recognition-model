@@ -1,17 +1,23 @@
 """
 Preprocessing module for color calibration and image preparation
 Handles camera calibration, color correction, and image preprocessing
+
+NOTE: ML-based calibration (LinearRegression, MLPRegressor) are NOT currently used.
+The system uses CIEDE2000 algorithm which doesn't require ML calibration.
+Keeping this code commented out for potential future use.
 """
 
 import cv2
 import numpy as np
 from typing import Tuple, List, Optional, Union
 import matplotlib.pyplot as plt
-from sklearn.neural_network import MLPRegressor
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.pipeline import Pipeline
-import joblib
+
+# UNUSED: ML-based calibration models - commented out as not needed with CIEDE2000
+# from sklearn.neural_network import MLPRegressor
+# from sklearn.linear_model import LinearRegression
+# from sklearn.preprocessing import PolynomialFeatures
+# from sklearn.pipeline import Pipeline
+# import joblib
 import os
 
 from .utils import ColorSpaceConverter, ImageProcessor
@@ -152,26 +158,30 @@ class CameraCalibrator:
         target_lab = ColorChecker.STANDARD_LAB_VALUES
         
         # Train calibration model
+        # UNUSED: ML calibration methods disabled - CIEDE2000 doesn't require calibration
         if self.method == 'linear':
-            self.model = LinearRegression()
-            self.model.fit(detected_lab, target_lab)
+            # self.model = LinearRegression()
+            # self.model.fit(detected_lab, target_lab)
+            raise ValueError("ML-based calibration methods are disabled. Use CIEDE2000 algorithm instead.")
             
         elif self.method == 'polynomial':
-            self.model = Pipeline([
-                ('poly', PolynomialFeatures(degree=2)),
-                ('linear', LinearRegression())
-            ])
-            self.model.fit(detected_lab, target_lab)
+            # self.model = Pipeline([
+            #     ('poly', PolynomialFeatures(degree=2)),
+            #     ('linear', LinearRegression())
+            # ])
+            # self.model.fit(detected_lab, target_lab)
+            raise ValueError("ML-based calibration methods are disabled. Use CIEDE2000 algorithm instead.")
             
         elif self.method == 'neural_network':
-            self.model = MLPRegressor(
-                hidden_layer_sizes=(100, 50),
-                activation='relu',
-                solver='adam',
-                max_iter=1000,
-                random_state=42
-            )
-            self.model.fit(detected_lab, target_lab)
+            # self.model = MLPRegressor(
+            #     hidden_layer_sizes=(100, 50),
+            #     activation='relu',
+            #     solver='adam',
+            #     max_iter=1000,
+            #     random_state=42
+            # )
+            # self.model.fit(detected_lab, target_lab)
+            raise ValueError("ML-based calibration methods are disabled. Use CIEDE2000 algorithm instead.")
         
         else:
             raise ValueError(f"Unknown calibration method: {self.method}")

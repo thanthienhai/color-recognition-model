@@ -34,11 +34,18 @@
     "custom_pigments": [],
     "cost_currency": "USD"
   },
+  "uart": {
+    "enabled": false,
+    "port": "/dev/ttyUSB0",
+    "baudrate": 115200,
+    "timeout": 1
+  },
   "output": {
     "save_visualizations": true,
     "save_results": true,
     "results_format": "json",
     "output_directory": "results/",
+    "mixing_formulas_directory": "mixing_formulas/",
     "create_reports": true
   },
   "performance": {
