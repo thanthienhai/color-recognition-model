@@ -20,6 +20,7 @@ from kivy.uix.widget import Widget
 from kivy.properties import StringProperty, NumericProperty, ListProperty
 from kivy.lang import Builder
 from kivy.clock import Clock
+from kivy.core.window import Window
 import os
 import sys
 
@@ -144,7 +145,7 @@ class SavedColorWidget(BoxLayout):
             # Create mixing data (simplified)
             mixing_data = {
                 "volume": 1.0,  # Default volume in liters
-                "color": formula_percentages
+                "mixing_formula": formula_percentages
             }
             
             print(f"Formula: {self.formula}")
@@ -1345,7 +1346,7 @@ class ScanColorScreen(Screen):
 
             mixing_data = {
                 "volume": volume,
-                "color": formula_percentages
+                "mixing_formula": formula_percentages
             }
             
             # Check UART config
@@ -1701,6 +1702,8 @@ class ColorMixingApp(App):
     def on_start(self):
         """Khi ứng dụng khởi động"""
         print("Hệ thống pha màu tự động khởi động")
+        # Set fullscreen mode
+        Window.fullscreen = True
         # TODO: Kiểm tra kết nối UART, khởi tạo CSDL
 
 
