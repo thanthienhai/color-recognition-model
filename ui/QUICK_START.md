@@ -1,3 +1,11 @@
+sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev \
+pkg-config libgl1-mesa-dev libgles2-mesa-dev python3-setuptools libgstreamer1.0-dev \
+gstreamer1.0-plugins-bad gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
+gstreamer1.0-plugins-ugly
+
+# Hoặc chạy trực tiếp với config
+KIVY_CONFIG_FILE=kivy_rpi.ini python ui/main.py
+
 # Quick Start Guide - Hệ thống Pha màu
 
 ## Khởi chạy nhanh trong 3 bước
