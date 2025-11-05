@@ -1,0 +1,29 @@
+# Requirements cho Raspberry Pi
+# Cài đặt: pip install -r requirements_rpi.txt
+
+# Core dependencies
+numpy>=1.21.0
+opencv-python-headless>=4.5.0  # Headless version cho RPi
+Pillow>=8.0.0
+
+# Kivy for Raspberry Pi (use compatible version)
+kivy>=2.1.0,<2.3.0
+kivy-garden>=0.1.4
+
+# Web server fallback
+flask>=2.0.0
+
+# Serial communication
+pyserial>=3.5
+
+# Color analysis (if available)
+# Uncomment if you have the module
+# advanced_color_analysis
+
+# Additional RPi specific
+RPi.GPIO>=0.7.0
+spidev>=3.5
+
+# Optional: Camera support
+# picamera>=1.13  # For Pi Camera
+# picamera2>=0.3.0  # For newer Pi Camera

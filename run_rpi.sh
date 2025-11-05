@@ -7,12 +7,23 @@ echo "💡 Nếu gặp lỗi, thử chạy: sudo ./run_rpi.sh"
 
 # Set environment variables for Raspberry Pi
 export KIVY_CONFIG_FILE=kivy_rpi.ini
+
+# Try different backends in order
+# Option 1: SDL2 with RPi
 export KIVY_WINDOW=sdl2
 export KIVY_GRAPHICS=gles
 export SDL_VIDEO_DRIVER=rpi
 export SDL_FBDEV=/dev/fb0
 export SDL_VIDEODRIVER=rpi
 export SDL_AUDIODRIVER=dummy
+
+# Option 2: Use pygame (more compatible with older RPi)
+# export KIVY_WINDOW=pygame
+# export KIVY_GRAPHICS=gl
+
+# Option 3: Use egl_rpi (if available)
+# export KIVY_WINDOW=egl_rpi
+# export KIVY_GRAPHICS=gles
 
 # Check if X11 is available
 if command -v xset &> /dev/null && xset q &> /dev/null; then

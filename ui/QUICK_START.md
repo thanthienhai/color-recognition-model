@@ -84,6 +84,42 @@ chmod +x run.sh
 python3 main.py
 ```
 
+### Lỗi trên Raspberry Pi: "no matching FB config"
+```bash
+# 1. Test Kivy
+python test_kivy_rpi.py
+
+# 2. Thử pygame backend
+./run_rpi_pygame.sh
+
+# 3. Nếu GUI không hoạt động, dùng web interface
+python web_server.py
+# Sau đó truy cập: http://raspberry_pi_ip:5000
+```
+
+---
+
+## Raspberry Pi Setup
+
+### GUI Mode (khuyên dùng)
+```bash
+# Cài đặt dependencies
+sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev \
+pkg-config libgl1-mesa-dev libgles2-mesa-dev python3-setuptools libgstreamer1.0-dev \
+gstreamer1.0-plugins-bad gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
+gstreamer1.0-plugins-ugly
+
+# Chạy ứng dụng
+./run_rpi.sh
+```
+
+### Web Interface Mode (fallback)
+Nếu GUI không hoạt động, dùng web server:
+```bash
+python web_server.py
+```
+Truy cập từ browser: `http://raspberry_pi_ip:5000`
+
 ---
 
 ## Liên hệ
