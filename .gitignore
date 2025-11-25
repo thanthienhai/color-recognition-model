@@ -208,4 +208,5 @@ __marimo__/
 
 .kiro/
 data/
-models/
+models/checkpoints
+models/color_detection
