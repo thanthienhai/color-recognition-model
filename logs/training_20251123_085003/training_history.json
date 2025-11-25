@@ -1,0 +1,60 @@
+{
+  "metadata": {
+    "experiment_name": "training_20251123_085003",
+    "start_time": "2025-11-23T08:50:03.860397",
+    "end_time": "2025-11-23T08:50:41.512348",
+    "hyperparameters": {
+      "learning_rate": 0.001,
+      "batch_size": 16,
+      "epochs": 5,
+      "early_stopping_patience": 10,
+      "scheduler_patience": 3,
+      "scheduler_factor": 0.5
+    },
+    "model_info": {
+      "num_colors": 16,
+      "device": "mps",
+      "model_version": null,
+      "model_path": null,
+      "training_metadata": {},
+      "num_parameters": 26215440
+    }
+  },
+  "history": {
+    "train_loss": [
+      0.06609492938196848,
+      0.04025695322170144,
+      0.03668160026981717,
+      0.03467113660678031,
+      0.03457534724166469
+    ],
+    "val_loss": [
+      0.045337323672496356,
+      0.034984457378204055,
+      0.030668467139968507,
+      0.035929787617463335,
+      0.0279717964048569
+    ],
+    "val_delta_e": [
+      79.980224609375,
+      70.7269515991211,
+      66.72411346435547,
+      71.4669418334961,
+      64.08277893066406
+    ],
+    "learning_rates": [
+      0.001,
+      0.001,
+      0.001,
+      0.001,
+      0.001
+    ],
+    "epochs": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  }
+}

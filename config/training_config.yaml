@@ -1,0 +1,39 @@
+# CNN Color Ratio Model Training Configuration
+
+# Data generation settings
+data:
+  num_train: 10000      # Number of training samples
+  num_val: 2000         # Number of validation samples
+  num_test: 1000        # Number of test samples
+  output_dir: data      # Output directory for datasets
+  apply_augmentation: true  # Apply augmentations to training data
+
+# Model settings
+model:
+  device: auto          # Device: auto, cpu, cuda, or mps
+  num_colors: 16        # Number of base colors
+
+# Training hyperparameters
+training:
+  epochs: 50            # Number of training epochs
+  batch_size: 32        # Batch size
+  learning_rate: 0.001  # Initial learning rate
+  early_stopping_patience: 10  # Stop if no improvement for N epochs
+  scheduler_patience: 3        # Reduce LR if no improvement for N epochs
+  scheduler_factor: 0.5        # Factor to reduce LR by
+
+# Checkpoint settings
+checkpoints:
+  dir: models/checkpoints  # Directory for checkpoints
+  interval: 5              # Save checkpoint every N epochs
+
+# Logging settings
+logging:
+  dir: logs                # Directory for logs
+  experiment_name: null    # Experiment name (auto-generated if null)
+
+# Output settings
+output:
+  model_dir: models/color_detection  # Directory for final model
+  model_name: cnn_color_ratio        # Model filename prefix
+  model_version: v1.0.0              # Model version

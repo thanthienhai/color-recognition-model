@@ -8,6 +8,19 @@ import cv2
 from typing import Dict, List, Tuple, Optional
 from dataclasses import dataclass
 import math
+import logging
+
+# Setup logger
+logger = logging.getLogger(__name__)
+
+# Import prediction logger
+try:
+    from prediction_logger import get_prediction_logger
+    PREDICTION_LOGGER_AVAILABLE = True
+except ImportError:
+    PREDICTION_LOGGER_AVAILABLE = False
+    get_prediction_logger = None
+    logger.warning("PredictionLogger not available")
 
 
 @dataclass
@@ -19,6 +32,10 @@ class ColorPrediction:
     rgb_values: Tuple[int, int, int] # Giá trị RGB
     lab_values: Tuple[float, float, float]  # Giá trị Lab
     delta_e_values: Optional[Dict[str, float]] = None  # Delta E to each color
+    prediction_method: str = "ciede2000"  # Method used: "cnn" or "ciede2000"
+    model_version: Optional[str] = None  # CNN model version if applicable
+    inference_time_ms: Optional[float] = None  # Inference time in milliseconds
+    quality_score: Optional[str] = None  # Quality classification
 
 
 class CIEDE2000Calculator:
@@ -256,27 +273,102 @@ class ImprovedColorAnalyzer:
 class ColorAnalysisEngineV2:
     """
     Upgraded Color Analysis Engine with better algorithms
+    Supports both CIEDE2000 and CNN-based analysis
     """
     
-    def __init__(self):
+    def __init__(self, cnn_model_path: Optional[str] = None):
         self.analyzer = ImprovedColorAnalyzer()
         self.delta_e_calculator = CIEDE2000Calculator()
+        
+        # CNN model integration
+        self.cnn_model = None
+        self.cnn_available = False
+        
+        # Try to load CNN model if path provided
+        if cnn_model_path:
+            self._load_cnn_model(cnn_model_path)
+    
+    def _get_quality_from_delta_e(self, delta_e: float) -> str:
+        """
+        Get quality classification from Delta E value.
+        
+        Args:
+            delta_e: Delta E value
+            
+        Returns:
+            Quality string: "Excellent", "Good", "Acceptable", or "Poor"
+        """
+        if delta_e < 1.0:
+            return "Excellent"
+        elif delta_e < 2.0:
+            return "Good"
+        elif delta_e < 4.0:
+            return "Acceptable"
+        else:
+            return "Poor"
+    
+    def _load_cnn_model(self, model_path: str) -> bool:
+        """
+        Load CNN model for color ratio prediction.
+        
+        Args:
+            model_path: Path to CNN model checkpoint
+            
+        Returns:
+            True if loading successful, False otherwise
+        """
+        try:
+            from deep_color_model import CNNColorRatioModel
+            
+            self.cnn_model = CNNColorRatioModel(model_path=model_path)
+            self.cnn_available = True
+            print(f"CNN model loaded successfully from {model_path}")
+            return True
+        
+        except ImportError:
+            print("PyTorch not available, CNN model disabled")
+            return False
+        
+        except Exception as e:
+            print(f"Failed to load CNN model: {e}")
+            return False
     
     def analyze_color(self, rgb_values: Tuple[int, int, int], 
                      lab_values: Tuple[float, float, float],
-                     method: str = "ciede2000") -> ColorPrediction:
+                     method: str = "auto",
+                     image: Optional[np.ndarray] = None) -> ColorPrediction:
         """
         Analyze color and return prediction
         
         Args:
             rgb_values: RGB values (0-255)
             lab_values: Lab values
-            method: "ciede2000" (default) or "simple"
+            method: "auto" (default), "cnn", "ciede2000", or "simple"
+            image: Optional image array for CNN analysis (224x224x3)
             
         Returns:
             ColorPrediction object
         """
-        if method == "ciede2000":
+        # Method selection logic
+        if method == "auto":
+            # Try CNN first if available, fallback to CIEDE2000
+            if self.cnn_available and image is not None:
+                try:
+                    return self._analyze_with_cnn(rgb_values, lab_values, image)
+                except Exception as e:
+                    print(f"CNN analysis failed: {e}, falling back to CIEDE2000")
+                    method = "ciede2000"
+            else:
+                method = "ciede2000"
+        
+        if method == "cnn":
+            if not self.cnn_available:
+                raise ValueError("CNN model not available. Use method='ciede2000' or load CNN model.")
+            if image is None:
+                raise ValueError("Image required for CNN analysis")
+            return self._analyze_with_cnn(rgb_values, lab_values, image)
+        
+        elif method == "ciede2000":
             percentages, delta_e_values = self.analyzer.analyze_color(
                 rgb_values, lab_values, temperature=3.5
             )
@@ -294,14 +386,109 @@ class ColorAnalysisEngineV2:
         dominant_color = max(sorted_colors, key=sorted_colors.get)
         confidence = sorted_colors[dominant_color] / 100.0
         
+        # Get quality score from Delta E
+        min_delta_e = min(delta_e_values.values()) if delta_e_values else None
+        quality_score = self._get_quality_from_delta_e(min_delta_e) if min_delta_e is not None else None
+        
         return ColorPrediction(
             primary_colors=sorted_colors,
             dominant_color=dominant_color,
             confidence=confidence,
             rgb_values=rgb_values,
             lab_values=lab_values,
-            delta_e_values=delta_e_values
+            delta_e_values=delta_e_values,
+            prediction_method=method,
+            quality_score=quality_score
         )
+    
+    def _analyze_with_cnn(self, rgb_values: Tuple[int, int, int],
+                         lab_values: Tuple[float, float, float],
+                         image: np.ndarray) -> ColorPrediction:
+        """
+        Analyze color using CNN model.
+        
+        Args:
+            rgb_values: RGB values (0-255)
+            lab_values: Lab values
+            image: Image array (H, W, 3) with RGB values [0, 255]
+            
+        Returns:
+            ColorPrediction object
+        """
+        import time
+        
+        # Measure inference time
+        start_time = time.time()
+        ratios = self.cnn_model.predict(image)
+        inference_time_ms = (time.time() - start_time) * 1000
+        
+        # Convert ratios to percentages
+        percentages = {
+            color_name: float(ratio * 100)
+            for color_name, ratio in zip(self.analyzer.color_names, ratios)
+        }
+        
+        # Sort by percentage
+        sorted_colors = dict(sorted(percentages.items(), 
+                                   key=lambda x: x[1], reverse=True))
+        
+        # Find dominant color
+        dominant_color = max(sorted_colors, key=sorted_colors.get)
+        confidence = sorted_colors[dominant_color] / 100.0
+        
+        # Calculate Delta E values for reference
+        delta_e_values = {}
+        input_lab = np.array(lab_values)
+        for color_name, ref_lab in self.analyzer.reference_lab.items():
+            delta_e = self.delta_e_calculator.calculate_delta_e_2000(
+                input_lab, ref_lab
+            )
+            delta_e_values[color_name] = delta_e
+        
+        # Get minimum Delta E for quality score
+        min_delta_e = min(delta_e_values.values())
+        quality_score = self._get_quality_from_delta_e(min_delta_e)
+        
+        # Get model version
+        model_version = self.cnn_model.model_version if hasattr(self.cnn_model, 'model_version') else None
+        
+        return ColorPrediction(
+            primary_colors=sorted_colors,
+            dominant_color=dominant_color,
+            confidence=confidence,
+            rgb_values=rgb_values,
+            lab_values=lab_values,
+            delta_e_values=delta_e_values,
+            prediction_method="cnn",
+            model_version=model_version,
+            inference_time_ms=inference_time_ms,
+            quality_score=quality_score
+        )
+    
+    def preprocess_image_for_cnn(self, image: np.ndarray) -> np.ndarray:
+        """
+        Preprocess image for CNN inference.
+        
+        Applies:
+        - Resize to 224x224
+        - Color normalization
+        - ImageNet normalization
+        
+        Args:
+            image: Input image (H, W, 3) with RGB values [0, 255]
+            
+        Returns:
+            Preprocessed image ready for CNN
+        """
+        # Resize to 224x224 if needed
+        if image.shape[:2] != (224, 224):
+            image = cv2.resize(image, (224, 224))
+        
+        # Ensure RGB format and uint8
+        if image.dtype != np.uint8:
+            image = np.clip(image, 0, 255).astype(np.uint8)
+        
+        return image
     
     def get_mixing_formula(self, color_prediction: ColorPrediction,
                           simplify: bool = True,
@@ -356,6 +543,171 @@ class ColorAnalysisEngineV2:
             ratios = {color: ratio // gcd_value for color, ratio in ratios.items()}
         
         return ratios
+    
+    def validate_mixing_formula(self, formula: Dict[str, int]) -> Dict[str, any]:
+        """
+        Validate mixing formula for correctness and UART compatibility.
+        
+        Args:
+            formula: Dictionary of color names to integer parts
+            
+        Returns:
+            Dictionary with validation results
+        """
+        validation_result = {
+            'valid': True,
+            'errors': [],
+            'warnings': [],
+            'total_parts': 0,
+            'num_colors': len(formula)
+        }
+        
+        # Check if formula is empty
+        if not formula:
+            validation_result['valid'] = False
+            validation_result['errors'].append("Formula is empty")
+            return validation_result
+        
+        # Calculate total parts
+        total_parts = sum(formula.values())
+        validation_result['total_parts'] = total_parts
+        
+        # Check all values are positive integers
+        for color, parts in formula.items():
+            if not isinstance(parts, int):
+                validation_result['valid'] = False
+                validation_result['errors'].append(f"{color}: value must be integer, got {type(parts)}")
+            elif parts <= 0:
+                validation_result['valid'] = False
+                validation_result['errors'].append(f"{color}: value must be positive, got {parts}")
+        
+        # Check color names are valid
+        valid_colors = set(self.analyzer.color_names)
+        for color in formula.keys():
+            if color not in valid_colors:
+                validation_result['valid'] = False
+                validation_result['errors'].append(f"Invalid color name: {color}")
+        
+        # Check UART compatibility (reasonable number of parts)
+        if total_parts > 1000:
+            validation_result['warnings'].append(
+                f"Total parts ({total_parts}) is very large, may cause UART issues"
+            )
+        
+        # Check number of colors
+        if len(formula) > 8:
+            validation_result['warnings'].append(
+                f"Formula has {len(formula)} colors, more than recommended maximum of 8"
+            )
+        
+        return validation_result
+    
+    def export_formula_to_json(
+        self,
+        formula: Dict[str, int],
+        color_prediction: ColorPrediction,
+        save_path: str,
+        include_metadata: bool = True
+    ) -> None:
+        """
+        Export mixing formula to JSON file.
+        
+        Args:
+            formula: Mixing formula dictionary
+            color_prediction: Color prediction result
+            save_path: Path to save JSON file
+            include_metadata: Whether to include metadata
+        """
+        import json
+        from datetime import datetime
+        from pathlib import Path
+        
+        # Create output directory if needed
+        Path(save_path).parent.mkdir(parents=True, exist_ok=True)
+        
+        # Prepare formula data
+        formula_data = {
+            'formula': formula,
+            'total_parts': sum(formula.values())
+        }
+        
+        # Add metadata if requested
+        if include_metadata:
+            formula_data['metadata'] = {
+                'timestamp': datetime.now().isoformat(),
+                'target_rgb': color_prediction.rgb_values,
+                'target_lab': color_prediction.lab_values,
+                'dominant_color': color_prediction.dominant_color,
+                'confidence': color_prediction.confidence,
+                'prediction_method': color_prediction.prediction_method,
+                'model_version': color_prediction.model_version,
+                'quality_score': color_prediction.quality_score
+            }
+        
+        # Save to JSON
+        with open(save_path, 'w', encoding='utf-8') as f:
+            json.dump(formula_data, f, indent=2, ensure_ascii=False)
+    
+    def format_uart_message(self, formula: Dict[str, int]) -> str:
+        """
+        Format mixing formula as UART message.
+        
+        Args:
+            formula: Mixing formula dictionary
+            
+        Returns:
+            UART-formatted message string
+        """
+        # Format: COLOR1:PARTS1,COLOR2:PARTS2,...
+        parts = [f"{color}:{parts}" for color, parts in formula.items()]
+        uart_message = ",".join(parts)
+        
+        return uart_message
+    
+    def save_formula_to_file(
+        self,
+        formula: Dict[str, int],
+        color_prediction: ColorPrediction,
+        output_dir: str = "mixing_formulas",
+        filename: Optional[str] = None
+    ) -> str:
+        """
+        Save mixing formula to file in mixing_formulas directory.
+        
+        Args:
+            formula: Mixing formula dictionary
+            color_prediction: Color prediction result
+            output_dir: Output directory
+            filename: Optional filename (auto-generated if None)
+            
+        Returns:
+            Path to saved file
+        """
+        from datetime import datetime
+        from pathlib import Path
+        
+        # Create output directory
+        output_path = Path(output_dir)
+        output_path.mkdir(parents=True, exist_ok=True)
+        
+        # Generate filename if not provided
+        if filename is None:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            dominant = color_prediction.dominant_color.replace(" ", "_")
+            filename = f"formula_{dominant}_{timestamp}.json"
+        
+        # Full path
+        save_path = output_path / filename
+        
+        # Export to JSON
+        self.export_formula_to_json(
+            formula,
+            color_prediction,
+            str(save_path),
+            include_metadata=True
+        )
+        
+        return str(save_path)
     
     def calculate_color_distance(self, lab1: Tuple[float, float, float],
                                  lab2: Tuple[float, float, float]) -> float:
