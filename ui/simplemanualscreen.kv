@@ -1,0 +1,96 @@
+#:kivy 2.1.0
+
+<SimpleManualScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 30
+        spacing: 20
+        canvas.before:
+            Color:
+                rgba: 0.96, 0.97, 0.98, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        
+        # Tiêu đề
+        Label:
+            text: 'LẤY MÀU THỦ CÔNG'
+            font_size: '24sp'
+            bold: True
+            size_hint_y: 0.15
+            color: 0.15, 0.35, 0.55, 1
+        
+        # Khu vực chọn
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: 0.2
+            spacing: 30
+            padding: [20, 0]
+            
+            # Chọn màu
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 10
+                
+                Label:
+                    text: 'Tên màu được chọn'
+                    color: 0.3, 0.3, 0.3, 1
+                    font_size: '16sp'
+                    size_hint_y: None
+                    height: 30
+                
+                Spinner:
+                    id: color_spinner
+                    text: 'Chọn màu'
+                    values: ["Đen", "Trắng", "Vàng Chanh", "Đỏ", "Xanh Biển Sâu", "Xanh Dương", "Tím", "Nâu", "Vàng Neon", "Xanh Neon", "Xanh Lam Neon", "Cam Neon", "Hồng Neon", "Tím Neon", "Vàng Kim"]
+                    font_size: '16sp'
+                    background_color: 0.9, 0.9, 0.9, 1
+                    color: 0.2, 0.2, 0.2, 1
+            
+            # Chọn lượng
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 10
+                
+                Label:
+                    text: 'Lượng màu cần pha'
+                    color: 0.3, 0.3, 0.3, 1
+                    font_size: '16sp'
+                    size_hint_y: None
+                    height: 30
+                
+                Spinner:
+                    id: weight_spinner
+                    text: '1g'
+                    values: ['1g', '2g', '5g', '10g', '15g']
+                    font_size: '16sp'
+                    background_color: 0.9, 0.9, 0.9, 1
+                    color: 0.2, 0.2, 0.2, 1
+        
+        # Spacer
+        Widget:
+            size_hint_y: 0.3
+            
+        # Nút pha màu
+        BoxLayout:
+            size_hint_y: None
+            height: 60
+            padding: [100, 0]
+            
+            Button:
+                text: 'Pha màu'
+                font_size: '20sp'
+                bold: True
+                background_color: 0.2, 0.75, 0.4, 1
+                on_press: root.start_dispense()
+                canvas.before:
+                    Color:
+                        rgba: 0.2, 0.75, 0.4, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [10,]
+        
+        # Spacer bottom
+        Widget:
+            size_hint_y: 0.15

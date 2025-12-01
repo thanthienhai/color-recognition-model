@@ -153,7 +153,7 @@ class ImprovedColorAnalyzer:
     def __init__(self):
         # Original 16 colors from the system
         self.color_names = [
-            "Đen", "Trắng", "Vàng Chanh", "Đỏ", "Xanh Lá", "Xanh Biển Sâu",
+            "Đen", "Trắng", "Vàng Chanh", "Đỏ", "Xanh Biển Sâu",
             "Xanh Dương", "Tím", "Nâu", "Vàng Neon", "Xanh Neon",
             "Xanh Lam Neon", "Cam Neon", "Hồng Neon", "Tím Neon", "Vàng Kim"
         ]
@@ -164,7 +164,6 @@ class ImprovedColorAnalyzer:
             "Trắng": np.array([95.0, 0.0, 0.0]),         # Near white (was 100)
             "Vàng Chanh": np.array([95.0, -15.0, 90.0]), # Lemon yellow (improved)
             "Đỏ": np.array([53.0, 80.0, 67.0]),          # Pure red (validated)
-            "Xanh Lá": np.array([46.0, -52.0, 50.0]),    # Green (improved)
             "Xanh Biển Sâu": np.array([72.0, -25.0, -38.0]), # Deep sky blue (improved)
             "Xanh Dương": np.array([32.0, 79.0, -108.0]), # Pure blue (validated)
             "Tím": np.array([30.0, 59.0, -36.0]),        # Purple (validated)
@@ -397,9 +396,53 @@ class ColorAnalysisEngineV2:
             rgb_values=rgb_values,
             lab_values=lab_values,
             delta_e_values=delta_e_values,
-            prediction_method=method,
             quality_score=quality_score
         )
+    
+    def process_input_image(self, image_rgb: np.ndarray) -> Tuple[Tuple[int, int, int], Tuple[float, float, float]]:
+        """
+        Process input image (ROI) to extract dominant color and convert to Standard Lab.
+        Uses K-Means clustering for robust color extraction.
+        
+        Args:
+            image_rgb: Input RGB image (ROI)
+            
+        Returns:
+            Tuple of ((r,g,b), (L,a,b)) where L,a,b are in Standard scale
+        """
+        # 1. Extract dominant color using K-Means (k=1)
+        # Reshape to list of pixels
+        pixels = image_rgb.reshape(-1, 3).astype(np.float32)
+        
+        # Define criteria = ( type, max_iter, epsilon )
+        criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+        
+        # Run k-means
+        # k=1 to find the single most dominant color (centroid)
+        _, labels, centers = cv2.kmeans(pixels, 1, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+        
+        # Get the dominant color (RGB)
+        dominant_rgb = centers[0].astype(np.uint8)
+        rgb_int = tuple(int(x) for x in dominant_rgb)
+        
+        # 2. Convert to Lab
+        # Create a 1x1 pixel image for conversion
+        pixel_img = np.array([[dominant_rgb]], dtype=np.uint8)
+        
+        # Convert to Lab using OpenCV
+        pixel_lab_cv = cv2.cvtColor(pixel_img, cv2.COLOR_RGB2LAB)[0][0]
+        
+        # 3. Convert OpenCV Lab to Standard Lab
+        # OpenCV L: 0..255 -> Standard L: 0..100
+        # OpenCV a: 0..255 -> Standard a: -128..127
+        # OpenCV b: 0..255 -> Standard b: -128..127
+        std_L = float(pixel_lab_cv[0]) * 100.0 / 255.0
+        std_a = float(pixel_lab_cv[1]) - 128.0
+        std_b = float(pixel_lab_cv[2]) - 128.0
+        
+        lab_std = (std_L, std_a, std_b)
+        
+        return rgb_int, lab_std
     
     def _analyze_with_cnn(self, rgb_values: Tuple[int, int, int],
                          lab_values: Tuple[float, float, float],
@@ -504,11 +547,11 @@ class ColorAnalysisEngineV2:
         Returns:
             Dictionary of color parts (integers)
         """
-        # Filter colors by significance (> 3%)
+        # Filter colors by significance (> 0.1%)
         significant_colors = {
             color: percentage
             for color, percentage in color_prediction.primary_colors.items()
-            if percentage > 3.0
+            if percentage > 0.1
         }
         
         if not significant_colors:

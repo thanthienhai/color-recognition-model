@@ -64,6 +64,151 @@ class MixByFormulaScreen(Screen):
         # TODO: Gửi lệnh in
 
 
+# Load KV file for Simple Manual Screen
+Builder.load_file(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'simplemanualscreen.kv'))
+
+class SimpleManualScreen(Screen):
+    """Màn hình lấy màu thủ công đơn giản"""
+    
+    def start_dispense(self):
+        """Bắt đầu pha màu"""
+        color_name = self.ids.color_spinner.text
+        weight_str = self.ids.weight_spinner.text
+        
+        if color_name == 'Chọn màu':
+            self.show_popup("Lỗi", "Vui lòng chọn màu!")
+            return
+            
+        print(f"Bắt đầu pha màu thủ công: {color_name} - {weight_str}")
+        
+        try:
+            # Parse weight
+            weight = float(weight_str.replace('g', '').strip())
+            
+            # Create mixing data
+            # Formula only contains the selected color (100% of the weight)
+            # But we need to calculate the absolute weight for this color
+            # Since it's a single color, the weight of that color IS the total weight
+            
+            # Convert color name to field name
+            field_name = self.convert_color_name_to_field(color_name)
+            
+            mixing_data = {
+                "weight": weight,
+                "mixing_formula": {
+                    field_name: weight
+                }
+            }
+            
+            # Send via UART
+            self.send_command(mixing_data)
+            
+        except Exception as e:
+            print(f"Lỗi: {e}")
+            self.show_popup("Lỗi", str(e))
+
+    def convert_color_name_to_field(self, color_name: str) -> str:
+        """Convert Vietnamese color name to field name"""
+        # Simple mapping or reuse the logic from SavedColorWidget
+        # For brevity, duplicating the map here or we could make it a static utility
+        vietnamese_map = {
+            'à': 'a', 'á': 'a', 'ả': 'a', 'ã': 'a', 'ạ': 'a',
+            'ă': 'a', 'ằ': 'a', 'ắ': 'a', 'ẳ': 'a', 'ẵ': 'a', 'ặ': 'a',
+            'â': 'a', 'ầ': 'a', 'ấ': 'a', 'ẩ': 'a', 'ẫ': 'a', 'ậ': 'a',
+            'è': 'e', 'é': 'e', 'ẻ': 'e', 'ẽ': 'e', 'ẹ': 'e',
+            'ê': 'e', 'ề': 'e', 'ế': 'e', 'ể': 'e', 'ễ': 'e', 'ệ': 'e',
+            'ì': 'i', 'í': 'i', 'ỉ': 'i', 'ĩ': 'i', 'ị': 'i',
+            'ò': 'o', 'ó': 'o', 'ỏ': 'o', 'õ': 'o', 'ọ': 'o',
+            'ô': 'o', 'ồ': 'o', 'ố': 'o', 'ổ': 'o', 'ỗ': 'o', 'ộ': 'o',
+            'ơ': 'o', 'ờ': 'o', 'ớ': 'o', 'ở': 'o', 'ỡ': 'o', 'ợ': 'o',
+            'ù': 'u', 'ú': 'u', 'ủ': 'u', 'ũ': 'u', 'ụ': 'u',
+            'ư': 'u', 'ừ': 'u', 'ứ': 'u', 'ử': 'u', 'ữ': 'u', 'ự': 'u',
+            'ỳ': 'y', 'ý': 'y', 'ỷ': 'y', 'ỹ': 'y', 'ỵ': 'y',
+            'đ': 'd',
+            'À': 'A', 'Á': 'A', 'Ả': 'A', 'Ã': 'A', 'Ạ': 'A',
+            'Ă': 'A', 'Ằ': 'A', 'Ắ': 'A', 'Ẳ': 'A', 'Ẵ': 'A', 'Ặ': 'A',
+            'Â': 'A', 'Ầ': 'A', 'Ấ': 'A', 'Ẩ': 'A', 'Ẫ': 'A', 'Ậ': 'A',
+            'È': 'E', 'É': 'E', 'Ẻ': 'E', 'Ẽ': 'E', 'Ẹ': 'E',
+            'Ê': 'E', 'Ề': 'E', 'Ế': 'E', 'Ể': 'E', 'Ễ': 'E', 'Ệ': 'E',
+            'Ì': 'I', 'Í': 'I', 'Ỉ': 'I', 'Ĩ': 'I', 'Ị': 'I',
+            'Ò': 'O', 'Ó': 'O', 'Ỏ': 'O', 'Õ': 'O', 'Ọ': 'O',
+            'Ô': 'O', 'Ồ': 'O', 'Ố': 'O', 'Ổ': 'O', 'Ỗ': 'O', 'Ộ': 'O',
+            'Ơ': 'O', 'Ờ': 'O', 'Ớ': 'O', 'Ở': 'O', 'Ỡ': 'O', 'Ợ': 'O',
+            'Ù': 'U', 'Ú': 'U', 'Ủ': 'U', 'Ũ': 'U', 'Ụ': 'U',
+            'Ư': 'U', 'Ừ': 'U', 'Ứ': 'U', 'Ử': 'U', 'Ữ': 'U', 'Ự': 'U',
+            'Ỳ': 'Y', 'Ý': 'Y', 'Ỷ': 'Y', 'Ỹ': 'Y', 'Ỵ': 'Y',
+            'Đ': 'D'
+        }
+        
+        result = ""
+        for char in color_name:
+            result += vietnamese_map.get(char, char)
+        
+        result = result.lower()
+        result = result.replace(' ', '_')
+        return result
+
+    def send_command(self, mixing_data):
+        """Send command via UART or save to file"""
+        import json
+        from kivy.app import App
+        
+        # Load config (simplified)
+        config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'config.json')
+        try:
+            with open(config_path, 'r', encoding='utf-8') as f:
+                config = json.load(f)
+        except:
+            config = {'uart': {'enabled': False}}
+            
+        uart_enabled = config.get('uart', {}).get('enabled', False)
+        
+        if uart_enabled:
+            # UART logic (simplified copy from SavedColorWidget)
+            try:
+                import serial
+                uart_config = config.get('uart', {})
+                port = uart_config.get('port', '/dev/ttyUSB0')
+                baudrate = uart_config.get('baudrate', 115200)
+                
+                ser = serial.Serial(port, baudrate, timeout=1)
+                json_str = json.dumps(mixing_data, ensure_ascii=False)
+                ser.write(json_str.encode('utf-8'))
+                ser.write(b'\n')
+                ser.close()
+                self.show_popup("Thành công", f"Đã gửi lệnh pha {mixing_data['weight']}g {self.ids.color_spinner.text}")
+            except Exception as e:
+                self.show_popup("Lỗi UART", str(e))
+        else:
+            # Save to file
+            output_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'mixing_formulas/')
+            os.makedirs(output_dir, exist_ok=True)
+            from datetime import datetime
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"manual_{timestamp}.json"
+            filepath = os.path.join(output_dir, filename)
+            
+            with open(filepath, 'w', encoding='utf-8') as f:
+                json.dump(mixing_data, f, indent=2, ensure_ascii=False)
+            
+            self.show_popup("Đã lưu", f"Đã lưu lệnh vào {filename}")
+
+    def show_popup(self, title, message):
+        from kivy.uix.popup import Popup
+        from kivy.uix.label import Label
+        from kivy.uix.button import Button
+        from kivy.uix.boxlayout import BoxLayout
+        
+        content = BoxLayout(orientation='vertical', padding=10, spacing=10)
+        content.add_widget(Label(text=message, size_hint_y=0.8))
+        close_btn = Button(text='Đóng', size_hint_y=0.2)
+        content.add_widget(close_btn)
+        
+        popup = Popup(title=title, content=content, size_hint=(0.6, 0.5))
+        close_btn.bind(on_press=popup.dismiss)
+        popup.open()
+
+
 class ManualDispenseScreen(Screen):
     """Màn hình chiết màu bằng tay"""
     
@@ -126,31 +271,6 @@ class SavedColorWidget(BoxLayout):
             
             # Load config
             config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'config.json')
-            try:
-                with open(config_path, 'r', encoding='utf-8') as f:
-                    config = json.load(f)
-            except:
-                config = {'uart': {'enabled': False}, 'output': {'mixing_formulas_directory': 'mixing_formulas/'}}
-            
-            # Convert formula to percentages with field names
-            total_parts = sum(self.formula.values())
-            formula_percentages = {}
-            
-            for color, parts in self.formula.items():
-                percentage = parts / total_parts if total_parts > 0 else 0
-                # Convert color name to field name
-                field_name = self.convert_color_name_to_field(color)
-                formula_percentages[field_name] = round(percentage, 4)
-            
-            # Create mixing data (simplified)
-            mixing_data = {
-                "volume": 1.0,  # Default volume in liters
-                "mixing_formula": formula_percentages
-            }
-            
-            print(f"Formula: {self.formula}")
-            print(f"Percentages: {formula_percentages}")
-            
             # Check UART config
             uart_enabled = config.get('uart', {}).get('enabled', False)
             
@@ -766,6 +886,17 @@ class ScanColorScreen(Screen):
                 texture.flip_vertical()
                 
                 # Convert frame to bytes and blit to texture
+                # Draw ROI rectangle on preview
+                preview_h, preview_w, _ = frame_rgb.shape
+                center_x, center_y = preview_w // 2, preview_h // 2
+                roi_size = 50 # Half size (total 100x100)
+                
+                # Draw green rectangle (0, 255, 0) - thickness 2
+                cv2.rectangle(frame_rgb, 
+                             (center_x - roi_size, center_y - roi_size),
+                             (center_x + roi_size, center_y + roi_size),
+                             (0, 255, 0), 2)
+
                 buf = frame_rgb.tobytes()
                 texture.blit_buffer(buf, colorfmt='rgb', bufferfmt='ubyte')
                 
@@ -816,30 +947,43 @@ class ScanColorScreen(Screen):
                 frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 frame_lab = cv2.cvtColor(frame, cv2.COLOR_BGR2LAB)
                 
-                # Calculate average color
-                avg_color = np.mean(frame_rgb, axis=(0, 1))
-                avg_color_normalized = avg_color / 255.0
+                # Calculate average color from center ROI (Region of Interest)
+                h, w, _ = frame_rgb.shape
+                center_x, center_y = w // 2, h // 2
+                roi_size = 50  # 100x100 pixel area
                 
-                avg_lab = np.mean(frame_lab, axis=(0, 1))
+                # Extract ROI
+                roi_rgb = frame_rgb[center_y-roi_size:center_y+roi_size, 
+                                  center_x-roi_size:center_x+roi_size]
+                roi_lab = frame_lab[center_y-roi_size:center_y+roi_size, 
+                                  center_x-roi_size:center_x+roi_size]
                 
-                # Update properties
-                self.scanned_color = avg_color_normalized.tolist()
-                self.lab_values = avg_lab.tolist()
-                
-                # Convert to integer RGB values for analysis
-                rgb_int = tuple(int(x) for x in avg_color)
-                lab_float = tuple(float(x) for x in avg_lab)
+                # Process input image using robust K-Means and Standard Lab conversion
+                if self.color_analyzer:
+                    rgb_int, lab_float = self.color_analyzer.process_input_image(roi_rgb)
+                    
+                    # Update properties for UI
+                    self.scanned_color = [x/255.0 for x in rgb_int]
+                    self.lab_values = list(lab_float)
+                else:
+                    # Fallback if analyzer not available
+                    avg_color = np.mean(roi_rgb, axis=(0, 1))
+                    self.scanned_color = (avg_color / 255.0).tolist()
+                    self.lab_values = [0, 0, 0] # Placeholder
+                    rgb_int = tuple(int(x) for x in avg_color)
+                    lab_float = (0, 0, 0)
                 
                 print(f"Màu phát hiện: RGB={rgb_int}, Lab={lab_float}")
                 
                 # AI Color Analysis
                 if self.color_analyzer:
                     try:
-                        # Analyze using AI
+                        # Analyze using CIEDE2000 (Industry Standard)
                         color_prediction = self.color_analyzer.analyze_color(
                             rgb_values=rgb_int,
                             lab_values=lab_float,
-                            method="combined"  # Use both traditional and deep learning
+                            method="ciede2000",  # Use CIEDE2000 explicitly
+                            image=roi_rgb        # Pass ROI image (prepared for future)
                         )
                         
                         # Display results
@@ -1318,35 +1462,44 @@ class ScanColorScreen(Screen):
                 self.show_error_popup("Lỗi", "Không thể tạo công thức pha màu.")
                 return
             
-            # Convert parts to percentages (0.0 to 1.0) with field names
-            total_parts = sum(mixing_formula.values())
-            formula_percentages = {}
-            
-            for color, parts in mixing_formula.items():
-                percentage = parts / total_parts if total_parts > 0 else 0
-                # Convert color name to field name (e.g., "Tím Neon" -> "tim_neon")
-                field_name = self.convert_color_name_to_field(color)
-                formula_percentages[field_name] = round(percentage, 4)  # 0.0 to 1.0
-            
             # Get product info from UI
             app = App.get_running_app()
             scan_screen = app.root.ids.screen_manager.get_screen('scan_color_screen')
             product_name = scan_screen.ids.product_name_input.text or "Unnamed"
-            volume_str = scan_screen.ids.volume_spinner.text or "1L"
+            weight_str = scan_screen.ids.volume_spinner.text or "1kg"
 
-            # Convert volume string to float (e.g., "1L" -> 1.0, "2.5L" -> 2.5)
+            # Convert weight string to grams (e.g., "1kg" -> 1000, "500g" -> 500)
             try:
-                volume = float(volume_str.replace('L', '').strip())
+                weight_str = weight_str.lower().strip()
+                if 'kg' in weight_str:
+                    weight = float(weight_str.replace('kg', '').strip()) * 1000
+                elif 'g' in weight_str:
+                    weight = float(weight_str.replace('g', '').strip())
+                else:
+                    weight = float(weight_str) # Assume grams if no unit
             except ValueError:
-                volume = 1.0  # Default fallback
+                weight = 100.0  # Default fallback (100g)
 
+            # Convert parts to absolute weights (grams) with field names
+            total_parts = sum(mixing_formula.values())
+            formula_weights = {}
+            
+            for color, parts in mixing_formula.items():
+                percentage = parts / total_parts if total_parts > 0 else 0
+                # Calculate absolute weight for this color
+                color_weight = percentage * weight
+                
+                # Convert color name to field name (e.g., "Tím Neon" -> "tim_neon")
+                field_name = self.convert_color_name_to_field(color)
+                formula_weights[field_name] = round(color_weight, 2)  # Round to 2 decimal places
+            
             # Create JSON data (simplified)
             import json
             from datetime import datetime
 
             mixing_data = {
-                "volume": volume,
-                "mixing_formula": formula_percentages
+                "weight": weight,  # Total weight in grams
+                "mixing_formula": formula_weights # Absolute weights for each color
             }
             
             # Check UART config

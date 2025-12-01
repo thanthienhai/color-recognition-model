@@ -1,0 +1,10 @@
+{
+  "weight": 10.0,
+  "mixing_formula": {
+    "den": 9.62,
+    "nau": 0.33,
+    "tim": 0.04,
+    "do": 0.01,
+    "tim_neon": 0.01
+  }
+}

@@ -43,6 +43,14 @@ BoxLayout:
         #     background_color: 0.2, 0.6, 0.8, 1
         
         Button:
+            text: 'Lấy màu\nthủ công'
+            font_size: '14sp'
+            size_hint_y: None
+            height: 100
+            on_press: app.root.ids.screen_manager.current = 'simple_manual_screen'
+            background_color: 0.2, 0.6, 0.8, 1
+        
+        Button:
             text: 'Pha màu\ntheo mẫu'
             font_size: '14sp'
             size_hint_y: None
@@ -92,6 +100,9 @@ BoxLayout:
         
         MixByFormulaScreen:
             name: 'mix_formula_screen'
+        
+        SimpleManualScreen:
+            name: 'simple_manual_screen'
         
         ManualDispenseScreen:
             name: 'manual_dispense_screen'

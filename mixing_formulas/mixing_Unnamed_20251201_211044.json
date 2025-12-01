@@ -1,0 +1,8 @@
+{
+  "weight": 10.0,
+  "mixing_formula": {
+    "hong_neon": 0.4847,
+    "tim_neon": 0.4744,
+    "tim": 0.0409
+  }
+}
