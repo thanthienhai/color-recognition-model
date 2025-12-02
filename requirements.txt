@@ -1,42 +1,46 @@
 # Core libraries for image processing and computer vision
 opencv-python==4.8.1.78
 numpy==1.24.3
-matplotlib==3.7.2
+# matplotlib==3.7.2
 Pillow==10.0.0
 
-# Machine Learning & Deep Learning
-scikit-learn==1.3.0
-torch==2.0.1
-torchvision==0.15.2
-tensorboard==2.13.0
-h5py==3.9.0
+# GUI & Hardware
+kivy==2.3.0
+pyserial==3.5
 
-# Color science and optimization
+# Machine Learning & Deep Learning (Commented out for faster install - Optional)
+# scikit-learn==1.3.0
+# torch==2.0.1
+# torchvision==0.15.2
+# tensorboard==2.13.0
+# h5py==3.9.0
+
+# Color science and optimization (Commented out - Optional)
 colorspacious==1.1.2
 scipy==1.11.2
 
-# Data handling and visualization
+# Data handling and visualization (Commented out - Optional)
 pandas==2.0.3
-seaborn==0.12.2
-plotly==5.15.0
+# seaborn==0.12.2
+# plotly==5.15.0
 
-# Jupyter notebook support
-jupyter==1.0.0
-ipykernel==6.25.1
+# Jupyter notebook support (Commented out - Optional)
+# jupyter==1.0.0
+# ipykernel==6.25.1
 
-# Image quality and color correction
+# Image quality and color correction (Commented out - Optional)
 rawpy==0.18.1
 colour-science==0.4.3
 
-# Optimization libraries
-cvxpy==1.3.2
-optuna==3.3.0
+# Optimization libraries (Commented out - Optional)
+# cvxpy==1.3.2
+# optuna==3.3.0
 
-# Testing
-pytest==7.4.0
-pytest-cov==4.1.0
+# Testing (Commented out - Optional)
+# pytest==7.4.0
+# pytest-cov==4.1.0
 
-# Development tools
+# Development tools (Commented out - Optional)
 black==23.7.0
 flake8==6.0.0
 pre-commit==3.3.3
