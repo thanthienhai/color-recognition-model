@@ -5,6 +5,10 @@ Main Kivy Application for Color Mixing System
 Hệ thống pha màu tự động
 """
 
+# Configure Kivy backend to use ANGLE (DirectX) for better compatibility on Windows
+import os
+os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
+
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.boxlayout import BoxLayout
