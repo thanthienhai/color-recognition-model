@@ -694,6 +694,7 @@ class ColorAnalysisEngineV2:
     def format_uart_message(self, formula: Dict[str, int]) -> str:
         """
         Format mixing formula as UART message.
+        Format: @mau1{T1,K1},mau2{T2,K2},mau3{T3,K3},mau4{T4,K4},mau5{T5,K5}#
         
         Args:
             formula: Mixing formula dictionary
@@ -701,11 +702,69 @@ class ColorAnalysisEngineV2:
         Returns:
             UART-formatted message string
         """
-        # Format: COLOR1:PARTS1,COLOR2:PARTS2,...
-        parts = [f"{color}:{parts}" for color, parts in formula.items()]
-        uart_message = ",".join(parts)
+        # Hardware color mapping
+        # Maps color name to Machine ID (T)
+        hardware_map = {
+            "Đen": "13",
+            "Trắng": "0",
+            "Vàng Chanh": "8",
+            "Đỏ": "3",
+            "Xanh Biển Sâu": "1",
+            "Xanh Dương": "7",
+            "Tím": "10",
+            "Nâu": "14",
+            "Vàng Neon": "5",
+            "Xanh Neon": "4",
+            "Xanh Lam Neon": "11",
+            "Cam Neon": "9",
+            "Hồng Neon": "12",
+            "Tím Neon": "15",
+            "Vàng Kim": "2"
+        }
         
-        return uart_message
+        items = list(formula.items())
+        # Sort by weight desc
+        items.sort(key=lambda x: x[1], reverse=True)
+        
+        formatted_items = []
+        used_ids = set()
+        
+        # Process existing colors
+        for i in range(5):
+            if i < len(items):
+                name_or_id, weight = items[i]
+                
+                # Determine Color ID (T)
+                if str(name_or_id) in hardware_map.values():
+                    # Already an ID
+                    color_id = str(name_or_id)
+                else:
+                    # Look up ID by name
+                    color_id = hardware_map.get(str(name_or_id), "0")
+                    if color_id == "0" and str(name_or_id) != "Trắng":
+                         # 0 is White, so if it's not White but got 0, it's unknown
+                         # But wait, "Trắng" maps to "0".
+                         # If name is unknown, what ID to use?
+                         # Maybe keep 0 or log warning.
+                         print(f"Warning: Unknown color {name_or_id}, using ID 0")
+                
+                formatted_items.append(f"mau{i+1}{{{color_id},{weight}}}")
+                used_ids.add(color_id)
+            else:
+                # Fill with random color, K=0
+                # Pick a random ID not in used_ids
+                import random
+                all_ids = list(hardware_map.values())
+                available_ids = [id for id in all_ids if id not in used_ids]
+                if not available_ids:
+                    available_ids = all_ids
+                
+                random_id = random.choice(available_ids)
+                
+                formatted_items.append(f"mau{i+1}{{{random_id},0}}")
+                used_ids.add(random_id)
+                
+        return "@" + ",".join(formatted_items) + "#"
     
     def save_formula_to_file(
         self,

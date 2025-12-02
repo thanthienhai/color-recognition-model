@@ -145,6 +145,11 @@ class SimpleManualScreen(Screen):
             
         uart_enabled = config.get('uart', {}).get('enabled', False)
         
+        # Format message
+        from advanced_color_analysis import ColorAnalysisEngine
+        engine = ColorAnalysisEngine()
+        content = engine.format_uart_message(mixing_data['mixing_formula'])
+        
         if uart_enabled:
             # UART logic (simplified copy from SavedColorWidget)
             try:
@@ -154,8 +159,7 @@ class SimpleManualScreen(Screen):
                 baudrate = uart_config.get('baudrate', 115200)
                 
                 ser = serial.Serial(port, baudrate, timeout=1)
-                json_str = json.dumps(mixing_data, ensure_ascii=False)
-                ser.write(json_str.encode('utf-8'))
+                ser.write(content.encode('utf-8'))
                 ser.write(b'\n')
                 ser.close()
                 self.show_popup("Thành công", f"Đã gửi lệnh pha {mixing_data['weight']}g {self.ids.color_spinner.text}")
@@ -167,11 +171,11 @@ class SimpleManualScreen(Screen):
             os.makedirs(output_dir, exist_ok=True)
             from datetime import datetime
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = f"manual_{timestamp}.json"
+            filename = f"manual_{timestamp}.txt"
             filepath = os.path.join(output_dir, filename)
             
             with open(filepath, 'w', encoding='utf-8') as f:
-                json.dump(mixing_data, f, indent=2, ensure_ascii=False)
+                f.write(content)
             
             self.show_popup("Đã lưu", f"Đã lưu lệnh vào {filename}")
 
@@ -302,11 +306,16 @@ class SavedColorWidget(BoxLayout):
             
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             product_name = mixing_data.get('product_name', 'Unnamed').replace(' ', '_')
-            filename = f"mixing_{product_name}_{timestamp}.json"
+            filename = f"mixing_{product_name}_{timestamp}.txt"
             filepath = os.path.join(output_dir, filename)
             
+            # Format content
+            from advanced_color_analysis import ColorAnalysisEngine
+            engine = ColorAnalysisEngine()
+            content = engine.format_uart_message(mixing_data['mixing_formula'])
+            
             with open(filepath, 'w', encoding='utf-8') as f:
-                json.dump(mixing_data, f, indent=2, ensure_ascii=False)
+                f.write(content)
             
             print(f"✓ Đã lưu công thức vào: {filepath}")
             print(f"  Màu: {self.dominant_color}")
@@ -346,12 +355,17 @@ class SavedColorWidget(BoxLayout):
             
             try:
                 ser = serial.Serial(port, baudrate, timeout=timeout)
-                json_str = json.dumps(mixing_data, ensure_ascii=False)
-                ser.write(json_str.encode('utf-8'))
+                
+                # Format message
+                from advanced_color_analysis import ColorAnalysisEngine
+                engine = ColorAnalysisEngine()
+                uart_msg = engine.format_uart_message(mixing_data['mixing_formula'])
+                
+                ser.write(uart_msg.encode('utf-8'))
                 ser.write(b'\n')
                 ser.close()
                 
-                print(f"✓ Đã gửi {len(json_str)} bytes qua UART")
+                print(f"✓ Đã gửi {len(uart_msg)} bytes qua UART")
                 
                 self.show_success_popup(
                     "Đã gửi lệnh pha màu",
@@ -1472,12 +1486,17 @@ class ScanColorScreen(Screen):
             # Generate filename with timestamp
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             product_name = mixing_data.get('product_name', 'Unnamed').replace(' ', '_')
-            filename = f"mixing_{product_name}_{timestamp}.json"
+            filename = f"mixing_{product_name}_{timestamp}.txt"
             filepath = os.path.join(output_dir, filename)
+            
+            # Format content
+            from advanced_color_analysis import ColorAnalysisEngine
+            engine = ColorAnalysisEngine()
+            content = engine.format_uart_message(mixing_data['mixing_formula'])
             
             # Save to file
             with open(filepath, 'w', encoding='utf-8') as f:
-                json.dump(mixing_data, f, indent=2, ensure_ascii=False)
+                f.write(content)
             
             print(f"✓ Đã lưu công thức vào: {filepath}")
             print(f"  Màu chủ đạo: {self.current_prediction.dominant_color}")
@@ -1525,14 +1544,16 @@ class ScanColorScreen(Screen):
             try:
                 ser = serial.Serial(port, baudrate, timeout=timeout)
                 
-                # Convert to JSON string
-                json_str = json.dumps(mixing_data, ensure_ascii=False)
+                # Format message
+                from advanced_color_analysis import ColorAnalysisEngine
+                engine = ColorAnalysisEngine()
+                uart_msg = engine.format_uart_message(mixing_data['mixing_formula'])
                 
                 # Send data
-                ser.write(json_str.encode('utf-8'))
+                ser.write(uart_msg.encode('utf-8'))
                 ser.write(b'\n')  # Add newline terminator
                 
-                print(f"✓ Đã gửi {len(json_str)} bytes qua UART")
+                print(f"✓ Đã gửi {len(uart_msg)} bytes qua UART")
                 print(f"  Màu chủ đạo: {self.current_prediction.dominant_color}")
                 print(f"  Số màu cần pha: {len(mixing_data['mixing_formula'])}")
 
