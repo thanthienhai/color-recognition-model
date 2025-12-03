@@ -21,7 +21,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.progressbar import ProgressBar
 from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.widget import Widget
-from kivy.properties import StringProperty, NumericProperty, ListProperty
+from kivy.properties import StringProperty, NumericProperty, ListProperty, BooleanProperty
 from kivy.lang import Builder
 from kivy.clock import Clock
 from kivy.core.window import Window
@@ -533,6 +533,7 @@ class ScanColorScreen(Screen):
     """Màn hình pha màu theo mẫu"""
     scanned_color = ListProperty([1, 1, 1])
     lab_values = ListProperty([0, 0, 0])
+    update_interval = NumericProperty(1.0 / 5.0)
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -875,7 +876,7 @@ class ScanColorScreen(Screen):
                     print(f"Lỗi UI update: {ui_error}")
                 
                 # Schedule next update
-                Clock.schedule_once(lambda dt: self.update_camera_preview(), 1.0/30.0)
+                Clock.schedule_once(lambda dt: self.update_camera_preview(), self.update_interval)
                 return True
                 
             else:
