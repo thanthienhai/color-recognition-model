@@ -150,7 +150,7 @@ class SimpleManualScreen(Screen):
         uart_enabled = config.get('uart', {}).get('enabled', False)
         
         # Format message
-        from advanced_color_analysis import ColorAnalysisEngine
+        from src.advanced_color_analysis import ColorAnalysisEngine
         engine = ColorAnalysisEngine()
         content = engine.format_uart_message(mixing_data['mixing_formula'])
         
@@ -345,7 +345,7 @@ class SavedColorWidget(BoxLayout):
             filepath = os.path.join(output_dir, filename)
             
             # Format content
-            from advanced_color_analysis import ColorAnalysisEngine
+            from src.advanced_color_analysis import ColorAnalysisEngine
             engine = ColorAnalysisEngine()
             content = engine.format_uart_message(mixing_data['mixing_formula'])
             
@@ -392,7 +392,7 @@ class SavedColorWidget(BoxLayout):
                 ser = serial.Serial(port, baudrate, timeout=timeout)
                 
                 # Format message
-                from advanced_color_analysis import ColorAnalysisEngine
+                from src.advanced_color_analysis import ColorAnalysisEngine
                 engine = ColorAnalysisEngine()
                 uart_msg = engine.format_uart_message(mixing_data['mixing_formula'])
                 
@@ -887,6 +887,16 @@ class ScanColorScreen(Screen):
                              (center_x - roi_size, center_y - roi_size),
                              (center_x + roi_size, center_y + roi_size),
                              (0, 255, 0), 2)
+
+                # DEBUG: Check if frame is black
+                avg_brightness = np.mean(frame_rgb)
+                if avg_brightness < 5:
+                    print(f"⚠️ Frame is BLACK (Avg brightness: {avg_brightness:.1f})")
+                else:
+                    # Print occasionally to avoid spam
+                    import random
+                    if random.random() < 0.05:
+                         print(f"✓ Frame OK (Avg brightness: {avg_brightness:.1f})")
 
                 buf = frame_rgb.tobytes()
                 texture.blit_buffer(buf, colorfmt='rgb', bufferfmt='ubyte')
@@ -1526,7 +1536,7 @@ class ScanColorScreen(Screen):
             filepath = os.path.join(output_dir, filename)
             
             # Format content
-            from advanced_color_analysis import ColorAnalysisEngine
+            from src.advanced_color_analysis import ColorAnalysisEngine
             engine = ColorAnalysisEngine()
             content = engine.format_uart_message(mixing_data['mixing_formula'])
             
@@ -1581,7 +1591,7 @@ class ScanColorScreen(Screen):
                 ser = serial.Serial(port, baudrate, timeout=timeout)
                 
                 # Format message
-                from advanced_color_analysis import ColorAnalysisEngine
+                from src.advanced_color_analysis import ColorAnalysisEngine
                 engine = ColorAnalysisEngine()
                 uart_msg = engine.format_uart_message(mixing_data['mixing_formula'])
                 
