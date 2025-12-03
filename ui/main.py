@@ -259,11 +259,42 @@ class SavedColorWidget(BoxLayout):
             from datetime import datetime
             from kivy.app import App
             
-            # Load config
+            # 1. Load config properly
             config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'config.json')
+            try:
+                with open(config_path, 'r', encoding='utf-8') as f:
+                    config = json.load(f)
+            except Exception as e:
+                print(f"⚠ Không thể đọc config: {e}")
+                config = {'uart': {'enabled': False}}
+            
             # Check UART config
             uart_enabled = config.get('uart', {}).get('enabled', False)
             
+            # 2. Prepare mixing_data
+            # Default to 100g for quick mix from saved list
+            default_weight = 100.0 
+            
+            # Convert parts/percentages in self.formula to absolute weights
+            total_parts = sum(self.formula.values())
+            formula_weights = {}
+            
+            if total_parts > 0:
+                for color_name, parts in self.formula.items():
+                    # Calculate weight: (parts / total) * total_weight
+                    weight = (parts / total_parts) * default_weight
+                    
+                    # Convert color name to field name
+                    field_name = self.convert_color_name_to_field(color_name)
+                    formula_weights[field_name] = round(weight, 2)
+            
+            mixing_data = {
+                "product_name": self.color_name,
+                "weight": default_weight,
+                "mixing_formula": formula_weights
+            }
+            
+            # 3. Execute
             if uart_enabled:
                 self.send_via_uart(mixing_data, config)
             else:
@@ -1728,62 +1759,61 @@ class ColorMixingApp(App):
         return Builder.load_file(main_kv_path)
 
     def find_cameras(self):
-        """Tìm các camera có sẵn và cập nhật Spinner - WSL compatible"""
+        """Tìm các camera có sẵn và cập nhật Spinner - Robust for Windows"""
         print("Đang tìm camera...")
         camera_list = []
         
         try:
             import cv2
-            
-            # Check if running in WSL
             import platform
-            is_wsl = 'microsoft' in platform.uname().release.lower() or 'wsl' in platform.uname().release.lower()
             
-            if is_wsl:
-                print("Phát hiện WSL environment, chỉ thử Windows backends...")
+            # Check OS
+            is_windows = platform.system() == 'Windows'
+            
+            if is_windows:
+                print("Phát hiện Windows - Quét chi tiết các backend...")
                 
-                # For WSL, ONLY try Windows-specific backends, skip V4L2
-                backends_to_try = [
-                    cv2.CAP_DSHOW,    # DirectShow (Windows) - BEST for WSL
-                    cv2.CAP_MSMF,     # Media Foundation (Windows) - Good for WSL
+                # Backends to try on Windows
+                # 700 = CAP_DSHOW, 1400 = CAP_MSMF
+                backends = [
+                    (cv2.CAP_DSHOW, "DirectShow"),
+                    (cv2.CAP_MSMF, "Media Foundation")
                 ]
                 
-                backend_names = ["DirectShow", "Media Foundation"]
-                
-                for backend_idx, backend in enumerate(backends_to_try):
-                    print(f"Thử backend: {backend_names[backend_idx]}")
-                    try:
-                        for i in range(3):  # Only check first 3 cameras
-                            cap = cv2.VideoCapture(i, backend)
+                for i in range(5): # Check first 5 indexes
+                    found_any_backend = False
+                    for backend_id, backend_name in backends:
+                        try:
+                            cap = cv2.VideoCapture(i, backend_id)
                             if cap.isOpened():
-                                # Try to read a frame to ensure it works
                                 ret, frame = cap.read()
                                 if ret and frame is not None:
-                                    camera_list.append(f"Camera {i} ({backend_names[backend_idx]})")
-                                    print(f"✓ Camera {i} hoạt động với {backend_names[backend_idx]} - {frame.shape}")
-                                    cap.release()
-                                else:
-                                    print(f"✗ Camera {i} mở được nhưng không đọc được frame với {backend_names[backend_idx]}")
-                                    cap.release()
-                            else:
+                                    camera_list.append(f"Camera {i} ({backend_name})")
+                                    print(f"✓ Camera {i} hoạt động với {backend_name}")
+                                    found_any_backend = True
                                 cap.release()
-                    except Exception as e:
-                        print(f"Lỗi với backend {backend_names[backend_idx]}: {e}")
-                        continue
-                
-                # Always add WSL-specific options
-                wsl_options = [
-                    "--- WSL Camera Methods ---",
-                    "IP Camera (RTSP/HLS)",
-                    "Windows Webcam Bridge",
-                    "USB Camera Passthrough",
-                    "Android Phone Camera"
-                ]
-                camera_list.extend(wsl_options)
-                
+                            else:
+                                # Don't print failure for every combination to avoid spam
+                                cap.release()
+                        except Exception as e:
+                            print(f"Lỗi check cam {i} {backend_name}: {e}")
+                            
+                    # Also try default backend if specific ones failed or just to be sure
+                    if not found_any_backend:
+                        try:
+                            cap = cv2.VideoCapture(i)
+                            if cap.isOpened():
+                                ret, frame = cap.read()
+                                if ret and frame is not None:
+                                    camera_list.append(f"Camera {i} (Default)")
+                                    print(f"✓ Camera {i} hoạt động với Default Backend")
+                                cap.release()
+                        except:
+                            pass
+
             else:
-                # Standard camera detection for non-WSL systems
-                print("Standard camera detection...")
+                # Linux/MacOS/Other
+                print("Standard camera detection (Non-Windows)...")
                 for i in range(10):
                     cap = cv2.VideoCapture(i)
                     if cap.isOpened():
@@ -1794,16 +1824,18 @@ class ColorMixingApp(App):
                             cap.release()
                         else:
                             cap.release()
-                            break
             
         except ImportError:
             print("OpenCV chưa được cài đặt")
-            camera_list = ["Cần cài đặt OpenCV (pip install opencv-python)"]
+            camera_list = ["Cần cài đặt OpenCV"]
         except Exception as e:
             print(f"Lỗi khi tìm camera: {e}")
             camera_list = ["Lỗi phát hiện camera"]
         
-        print(f"Tìm thấy: {camera_list}")
+        if not camera_list:
+            camera_list = ["Không tìm thấy camera"]
+            
+        print(f"Kết quả tìm kiếm: {camera_list}")
         
         # Cập nhật Spinner trên màn hình ScanColorScreen
         try:
